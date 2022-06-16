@@ -1,0 +1,10 @@
+services:
+  # NOTE keep these alphabetical
+  - filebrowser
+  - navidrome
+  - samba
+  #- borg
+  #- portainer
+  #- watchtower
+  #- homer
+  #- sabre
