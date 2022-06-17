@@ -1,0 +1,12 @@
+samba:
+  image: dperson/samba
+  ports:
+    - 139:139
+    - 445:445
+  volumes:
+    - "{{ samba_share_path }}:/samba"
+  command: >
+    -u '{{ samba_user }};{{ samba_user_passwd }}'
+    -s '{{ samba_share_config }}'
+    -p
+  restart: unless-stopped
