@@ -1,0 +1,10 @@
+- name: Copy over launcher script
+  copy:
+    src: launcher.sh
+    dest: ghettobox/launcher.sh
+    mode: u+x
+
+- name: Create populated docker-compose.yml file for service initialization
+  template:
+    src: templates/docker-compose.yml.j2
+    dest: ghettobox/docker-compose.yml
