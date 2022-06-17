@@ -3,11 +3,6 @@
     path: "{{ navidrome_music_path }}"
     owner: "{{ gb_user }}"
 
-- name: Ensure our user owns the navidrome music library
-  file:
-    path: "{{ pnas_share_path }}"
-    owner: "{{ pnas_user }}"
-
 - name: Ensure we have a directory for Navidrome data on the host
   file:
     path: ghettobox/data/navidrome
