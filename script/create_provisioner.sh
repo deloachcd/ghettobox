@@ -33,27 +33,32 @@ cat ansible/provision.yml
 
 create_basic_ansible_role() {
     ROLE=$1
+    BACKLINK=$(echo $ROLE | awk '{ gsub(/[a-zA-Z0-9]+/, ".."); print $0 }')
     # Generate a bunch of symlinks to create fleshed out ansible roles for our modules
     ROLE_HOME=ansible/$(basename $ROLE)
     # Main logic
     mkdir -p $ROLE_HOME/tasks
-    ln -s $ROLE/tasks.yml $ROLE_HOME/tasks/main.yml
+    ln -s $BACKLINK/../$ROLE/tasks.yml $ROLE_HOME/tasks/main.yml
 }
 
 create_full_ansible_role() {
     ROLE=$1
+    BACKLINK=$(echo $ROLE | awk '{ gsub(/[a-zA-Z0-9]+/, ".."); print $0 }')
     create_basic_ansible_role $ROLE
     # Files the main logic needs access to
     if [[ -d $ROLE/files ]]; then
-        ln -s $ROLE/files $ROLE_HOME/files
+        ln -s $BACKLINK/$ROLE/files $ROLE_HOME/files
     fi
     # Templates the main logic needs access to
     if [[ -d $ROLE/templates ]]; then
-        ln -s $ROLE/templates $ROLE_HOME/templates
+        ln -s $BACKLINK/$ROLE/templates $ROLE_HOME/templates
     fi
 }
 
-# TODO create roles from modules
+# TODO create roles from enabled modules
+for module in modules/*; do
+    create_full_ansible_role $module
+done
 
 create_basic_ansible_role core/finalize
 mkdir ansible/finalize/templates
