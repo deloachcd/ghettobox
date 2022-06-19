@@ -1,13 +1,12 @@
 #!/bin/bash
 
 services=$(grep -v '^\s*#' services.yml | tail -n +2 | awk '{ print $2 }')
-files=
-for service in services; do
+files="core/nginx/ports.list"
+for service in $services; do
     if [[ -e modules/$service/ports.list ]]; then
-        files="$files $(modules/$service/ports.list)"
+        files="$files modules/$service/ports.list"
     fi
 done
-files=$(find modules | grep ports.list | xargs)
 # Ensure ports.list files have a newline at the end
 for file in $files; do
     if test "$(tail -c 1 "$file")"; then
@@ -18,12 +17,12 @@ echo $files
 
 # Doing things the easy way, but maybe not the most efficient way
 ports=$(cat $files)
-lan_ports="["$(  echo "$ports" | grep 'lan'   | awk '{ print $2","}' | xargs)"]"
-wan_ports="["$(  echo "$ports" | grep 'wan'   | awk '{ print $2","}' | xargs)"]"
-proxy_ports="["$(echo "$ports" | grep 'proxy' | awk '{ print $2","}' | xargs)"]"
+lan_ports="["$(  echo "$ports" | grep 'global' | awk '{ print $2","}' | xargs)"]"
+wan_ports="["$(  echo "$ports" | grep 'local'  | awk '{ print $2","}' | xargs)"]"
+proxy_ports="["$(echo "$ports" | grep 'proxy'  | awk '{ print $2","}' | xargs)"]"
 
 # Generate our Ansible for firewall configuration
-cat | python3 << EOF
+python3 << EOF
 import yaml
 
 firewall_provision = [
@@ -33,3 +32,4 @@ firewall_provision = [
 ]
 print(yaml.safe_dump(firewall_provision))
 EOF
+

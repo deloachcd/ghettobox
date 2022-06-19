@@ -1,0 +1,36 @@
+# -*- mode: yaml -*-
+- name: Lock down the server's firewall with UFW
+  when: gb_lockdown_firewall
+  block:
+    - name: Ensure we have UFW installed for firewall
+      apt:
+        name: ufw
+        state: present
+
+    - name: Disable UFW and set default policy to deny
+      community.general.ufw:
+        state: disabled
+        default: deny
+
+    - name: Allow connections to port 22 (SSH) from LAN
+      community.general.ufw:
+        rule: allow
+        port: 22
+        from: "{{ gb_local_subnet }}"
+
+    # NOTE loop dynamically populated from script
+    - name: Allow connections to configured ports from LAN
+      community.general.ufw:
+        rule: allow
+        port: "{{ item }}"
+        from: "{{ gb_local_subnet }}"
+
+    # NOTE loop dynamically populated from script
+    - name: Allow connections to configured ports from WAN
+      community.general.ufw:
+        rule: allow
+        port: "{{ item }}"
+
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled
