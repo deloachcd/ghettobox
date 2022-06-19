@@ -12,6 +12,14 @@ else
     rm -r ansible/*
 fi
 
+# Ensure all non-hidden files end in a newline before we read them
+for file in $(find . -not -path '*/.*'); do
+    if test "$(tail -c 1 "$file")"; then
+        echo >> "$file"
+    fi
+done
+
+# Generate compound inventory file
 for file in core/setup/inventory.ini $(find modules | grep inventory.ini | xargs); do
     cat $file
     echo
@@ -19,17 +27,17 @@ done > ansible/inventory.ini
 chmod 600 ansible/inventory.ini
 cat ansible/inventory.ini
 
+enabled_services_list=$(grep -v '^\s*#' services.yml | tail -n +2)
 cat > ansible/provision.yml << EOF
 hosts: gb_host
 roles:
   - docker
   - setup
-  - proxy
-$(grep -v '^\s*#' services.yml | tail -n +2)
+  - nginx
+${enabled_services_list}
   - finalize
 EOF
-
-cat ansible/provision.yml
+enabled_services=$(echo "$enabled_services_list" | awk '{ print $2 }')
 
 create_basic_ansible_role() {
     ROLE=$1
@@ -55,10 +63,17 @@ create_full_ansible_role() {
     fi
 }
 
-# TODO create roles from enabled modules
-for module in modules/*; do
-    create_full_ansible_role $module
+# Construct ansible roles
+create_basic_ansible_role setup
+mkdir -p ansible/firewall/tasks
+for service in $enabled_services; do
+    create_full_ansible_role modules/$service
+    if [[ -e modules/$service/ports.list ]]; then
+        cat modules/$service/ports.list >> ansible/firewall/ports.list
+    fi
 done
+./script/add_ports_to_firewall_role.py > ansible/firewall/tasks/main.yml
+rm ansible/firewall/ports.list
 
 create_basic_ansible_role core/finalize
 mkdir ansible/finalize/templates
@@ -74,5 +89,4 @@ for file in $(find modules | grep docker-compose.yml | xargs); do
 done >> $DOCKER_COMPOSE_FILE
 cat $DOCKER_COMPOSE_FILE
 
-# TODO firewall
 # TODO nginx reverse proxy
