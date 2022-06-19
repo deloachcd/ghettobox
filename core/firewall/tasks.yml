@@ -12,24 +12,24 @@
         state: disabled
         default: deny
 
-    - name: Allow connections to port 22 (SSH) from LAN
-      community.general.ufw:
-        rule: allow
-        port: 22
-        from: "{{ gb_local_subnet }}"
-
-    # NOTE loop dynamically populated from script
-    - name: Allow connections to configured ports from LAN
+    # NOTE: ports added by modules are dynamically added to loop
+    - name: Allow connections to default & configured ports from LAN
       community.general.ufw:
         rule: allow
         port: "{{ item }}"
         from: "{{ gb_local_subnet }}"
+      loop:
+        - 22
+        - 80
 
-    # NOTE loop dynamically populated from script
-    - name: Allow connections to configured ports from WAN
+    # NOTE: ports added by modules are dynamically added to loop
+    - name: Allow connections to default & configured ports from WAN
       community.general.ufw:
         rule: allow
         port: "{{ item }}"
+        from: "{{ gb_local_subnet }}"
+      loop:
+        - 443
 
     - name: Enable UFW
       community.general.ufw:
