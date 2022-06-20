@@ -31,7 +31,7 @@ enabled_services_list=$(grep -v '^\s*#' services.yml | tail -n +2)
 cat > ansible/provision.yml << EOF
 hosts: gb_host
 roles:
-  - docker
+  - {role: docker, become: yes, when: gb_install_docker}
   - setup
   - nginx
 ${enabled_services_list}
@@ -64,6 +64,18 @@ create_full_ansible_role() {
 }
 
 # Construct ansible roles
+if [[ ! -e core/docker ]]; then
+    # Assume ARM if arch is anything other than AMD64, because who is still running
+    # a 32-bit operating system in 2022?
+    if [[ $(uname -r) == "x86_64" ]]; then
+        git clone https://github.com/geerlingguy/ansible-role-docker core/docker
+    else
+        git clone https://github.com/geerlingguy/ansible-role-docker_arm core/docker
+    fi
+fi
+mkdir ansible/docker/tasks
+ln -s core/docker ansible/docker
+
 create_basic_ansible_role setup
 mkdir -p ansible/firewall/tasks
 for service in $enabled_services; do

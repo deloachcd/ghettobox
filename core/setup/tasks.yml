@@ -16,10 +16,3 @@
   file:
     path: ghettobox/data
     state: directory
-
-- name: Ensure our user can manage docker containers
-  user:
-    name: "{{ gb_user }}"
-    append: yes
-    groups: docker
-  become: yes
