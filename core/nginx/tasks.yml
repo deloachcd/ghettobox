@@ -1,0 +1,14 @@
+- name: Ensure we have a directory for nginx configs and SSL certs
+  file:
+    path: ghettobox/nginx/ssl
+    state: directory
+
+- name: Copy over base nginx config
+  copy:
+    src: base.conf
+    dest: ghettobox/nginx/nginx.conf
+    
+- name: Copy over proxy config files for the services
+  copy:
+    src: services
+    path: ghettobox/nginx

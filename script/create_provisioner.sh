@@ -39,6 +39,7 @@ ${enabled_services_list}
 EOF
 enabled_services=$(echo "$enabled_services_list" | awk '{ print $2 }')
 
+# TODO change symlinks to hard copies so that the provisioner is portable
 create_basic_ansible_role() {
     ROLE=$1
     BACKLINK=$(echo $ROLE | awk '{ gsub(/[a-zA-Z0-9]+/, ".."); print $0 }')
@@ -76,29 +77,38 @@ fi
 mkdir ansible/docker/tasks
 ln -s core/docker ansible/docker
 
-create_basic_ansible_role setup
-mkdir -p ansible/firewall/tasks
-for service in $enabled_services; do
-    create_full_ansible_role modules/$service
-    if [[ -e modules/$service/ports.list ]]; then
-        cat modules/$service/ports.list >> ansible/firewall/ports.list
-    fi
-done
-./script/add_ports_to_firewall_role.py > ansible/firewall/tasks/main.yml
-rm ansible/firewall/ports.list
-
 create_basic_ansible_role core/finalize
 mkdir ansible/finalize/templates
-# Construct templated docker-compose.yml file for all our containerized services
 DOCKER_COMPOSE_FILE=ansible/finalize/templates/docker-compose.yml.j2
 cat > $DOCKER_COMPOSE_FILE << EOF
 version: "3"
 services:
 EOF
-for file in $(find modules | grep docker-compose.yml | xargs); do
-    indented_cat $file 2
-    echo
-done >> $DOCKER_COMPOSE_FILE
+
+create_basic_ansible_role core/nginx
+mkdir -p ansible/nginx/tasks
+mkdir -p ansible/nginx/files/services
+cp core/nginx/base.conf ansible/nginx/files/base.conf
+
+mkdir -p ansible/firewall/tasks
+
+create_basic_ansible_role setup
+for service in $enabled_services; do
+    create_full_ansible_role modules/$service
+    if [[ -e modules/$service/ports.list ]]; then
+        cat modules/$service/ports.list >> ansible/firewall/ports.list
+    fi
+    if [[ -e modules/$service/proxy.conf ]]; then
+        cat modules/$service/proxy.conf >> ansible/nginx/files/services/$service.conf
+    fi
+    if [[ -e modules/$service/docker-compose.yml ]]; then
+        indented_cat modules/$service/docker-compose.yml 2 >> $DOCKER_COMPOSE_FILE
+        echo >> $DOCKER_COMPOSE_FILE
+    fi
+done
+./script/add_ports_to_firewall_role.py > ansible/firewall/tasks/main.yml
+rm ansible/firewall/ports.list
+
 cat $DOCKER_COMPOSE_FILE
 
 # TODO nginx reverse proxy
