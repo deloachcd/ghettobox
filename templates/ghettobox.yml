@@ -1,0 +1,51 @@
+provisioner:
+  host: example.ghettobox.com
+  services:
+    - name: filebrowser
+      enabled: true
+      vars:
+        # Root path for the user to be able to browse via the filebrowser service
+        filebrowser_root_path: /path/to/fb/root
+
+    - name: navidrome
+      enabled: true
+      vars:
+        # Path to music files for the navidrome service
+        navidrome_music_path: /path/to/music
+
+    - name: samba
+      enabled: true
+      vars:
+        # Path to the samba share on the server
+        samba_share_path: /path/to/share
+
+        # Username and password for the samba user.
+        samba_user: "{{ gb_user }}"
+        samba_passwd: badpasswd
+
+        # Configuration options for the samba share.
+        #
+        # Volume mount point for {{ share_path }} will be '/samba' inside the container
+        # unless you modify the docker-compose file, so you probably don't want to change
+        # that unless you know what you're doing.
+        #
+        # From the 'help' text from samba.sh:
+        # "<name;/path>[;browse;readonly;guest;users;admins;writelist;comment]"
+        #               Configure a share
+        #               required arg: "<name>;</path>"
+        #               <name> is how it's called for clients
+        #               <path> path to share
+        #               NOTE: for the default values, just leave blank
+        #               [browsable] default:'yes' or 'no'
+        #               [readonly] default:'yes' or 'no'
+        #               [guest] allowed default:'yes' or 'no'
+        #               NOTE: for user lists below, usernames are separated by ','
+        #               [users] allowed default:'all' or list of allowed users
+        #               [admins] allowed default:'none' or list of admin users
+        #               [writelist] list of users that can write to a RO share
+        #               [comment] description of share
+        samba_share_options: "share;/samba;yes;no;no;${samba_user}"
+          
+    #- watchtower
+    #- baikal
+    #- borg
