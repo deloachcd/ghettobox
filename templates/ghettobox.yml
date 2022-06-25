@@ -1,23 +1,32 @@
 provisioner:
   host: example.ghettobox.com
   vars:
+    # Architecture type for the host, either x86 or ARM (case-insensitive)
+    # Raspberry pis are ARM, while most other common home computers are x86.
+    host_arch: arm
+
     # The username to connect to the server and run the deploy logic as.
     # Needs to be able to escalate privileges via sudo, and connect to the pi server
     # via SSH public key authentication.
     gb_user: example_username
 
     # Private IP address range for the server's local area network
-    gb_local_subnet: "192.168.0.0/16"
+    local_subnet: "192.168.0.0/16"
 
     # Controls whether or not the provisioner will deny connections on all ports
     # not explicitly allowed from LAN/WAN in enabled ghettobox modules on the server
     # Enabled with default answer "yes", but you might want to change it to "no" if
     # the server is already hosting services and/or has a reasonably secure
     # firewall configuration to accomodate them.
-    gb_lockdown_firewall: true
+    lockdown_firewall: true
 
     # Whether or not to install docker as part of server provisioning
-    gb_install_docker: true
+    install_docker: true
+
+    # Users which should be able to manage docker containers without sudo
+    # (only configured by provisioner if gb_install_docker is true)
+    docker_users:
+      - "{{ gb_user }}"
 
   services:
     - name: filebrowser

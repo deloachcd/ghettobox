@@ -1,0 +1,39 @@
+service:
+  proxy:
+    - location: "/"
+      config:
+        - "proxy_pass": "http://localhost:4533/"
+
+  firewall:
+    - port: 4533
+      scope: lan
+
+  tasks:
+    - name: Ensure our user owns the navidrome music library
+      file:
+        path: "{{ navidrome_music_path }}"
+        owner: "{{ gb_user }}"
+
+    - name: Ensure we have a directory for Navidrome data on the host
+      file:
+        path: ghettobox/data/navidrome
+        state: directory
+
+    - name: Copy over Navidrome config
+      copy:
+        src: navidrome.toml
+        dest: ghettobox/data/navidrome/config.toml
+
+  compose:
+    navidrome:
+      image: deluan/navidrome:latest
+      user: "{{ gb_user_uid }}:{{ gb_user_gid }}"
+      ports:
+        - "4533:4533"
+      environment:
+        ND_CONFIGFILE: "/data/config.toml"
+      volumes:
+        - "./data/navidrome:/data"
+        - "{{ navidrome_music_path }}:/music:ro"
+      restart: always
+  
