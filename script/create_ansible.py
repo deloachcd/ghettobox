@@ -4,14 +4,31 @@ import yaml
 import os
 import shutil
 import subprocess
+import importlib
+
+
+def get_inventory_loader():
+    # If the !dynamic tag is encountered, forward inventory YAML node from
+    # ghettobox.yml to modules/{name}/loader.py
+    def dynamic_constructor(loader, node):
+        mapping = loader.construct_mapping(node, deep=True)
+        module_name = list(mapping.keys())[0]
+        import_path = f"modules.{module_name}.loader"
+        module = importlib.import_module(import_path)
+        module.parser(node)
+        return {}
+
+    loader = yaml.SafeLoader
+    loader.add_constructor("!dynamic", dynamic_constructor)
+    return loader
 
 
 def service2role(service_name, service_path):
-    # TODO error if no service.yml
+    # TODO make more flexible, so that everything is optional
+    return
     with open(os.path.join(service_path, "service.yml"), "r") as infile:
         service_yml = yaml.safe_load(infile.read())
 
-    # TODO error if no tasks
     # Write tasks from specification to where ansible will see them
     os.makedirs(f"ansible/roles/{service_name}/tasks")
     with open(f"ansible/roles/{service_name}/tasks/main.yml", "w") as outfile:
@@ -41,14 +58,14 @@ def service2role(service_name, service_path):
 develop = True
 
 with open("templates/ghettobox.yml", "r") as infile:
-    gb_yml = yaml.safe_load(infile.read())
+    gb_yml = yaml.load(infile.read(), Loader=get_inventory_loader())
 
 inventory_yml = {
     "gb_host": {
-        "hosts": {gb_yml["provisioner"]["host"]: ""},
+        "hosts": {gb_yml["host"]: ""},
         "vars": {
-            "ansible_ssh_user": gb_yml["provisioner"]["vars"]["gb_user"],
-            **gb_yml["provisioner"]["vars"],
+            "ansible_ssh_user": gb_yml["vars"]["gb_user"],
+            **gb_yml["vars"],
         },
     }
 }
@@ -67,7 +84,7 @@ base_playbook_yml = [
 ## First, the externally-developed role to install docker is checked out
 # NOTE I don't use submodules to checkout this external git repo, because submodules are
 #      the most broken, unintuitive trash feature that git includes.
-if gb_yml["provisioner"]["vars"]["host_arch"].upper() == "ARM":
+if gb_yml["vars"]["host_arch"].upper() == "ARM":
     docker_upstream = "https://github.com/geerlingguy/ansible-role-docker"
 else:
     docker_upstream = "https://github.com/geerlingguy/ansible-role-docker_arm"
@@ -78,7 +95,7 @@ if not develop:
     )
 
 
-for service in gb_yml["provisioner"]["services"]:
+for service in gb_yml["services"]:
     if service["enabled"]:
         # write service variables to inventory
         # TODO encrypted password files for samba and radicale
