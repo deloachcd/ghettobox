@@ -1,5 +1,24 @@
 provisioner:
   host: example.ghettobox.com
+  vars:
+    # The username to connect to the server and run the deploy logic as.
+    # Needs to be able to escalate privileges via sudo, and connect to the pi server
+    # via SSH public key authentication.
+    gb_user: example_username
+
+    # Private IP address range for the server's local area network
+    gb_local_subnet: "192.168.0.0/16"
+
+    # Controls whether or not the provisioner will deny connections on all ports
+    # not explicitly allowed from LAN/WAN in enabled ghettobox modules on the server
+    # Enabled with default answer "yes", but you might want to change it to "no" if
+    # the server is already hosting services and/or has a reasonably secure
+    # firewall configuration to accomodate them.
+    gb_lockdown_firewall: true
+
+    # Whether or not to install docker as part of server provisioning
+    gb_install_docker: true
+
   services:
     - name: filebrowser
       enabled: true
