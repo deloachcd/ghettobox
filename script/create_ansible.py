@@ -7,6 +7,24 @@ import subprocess
 import importlib
 
 
+yml_tags = []
+tag_loaders = {}
+
+
+def get_tag_logging_loader():
+    # Returns a loader which logs all YAML tags, so that they can be
+    # dynamically loaded from enabled services
+    global yml_tags
+
+    def log_tag(loader, node):
+        yml_tags.append(node.tag)
+        return None
+
+    loader = yaml.SafeLoader
+    loader.add_constructor(None, log_tag)
+    return loader
+
+
 def get_inventory_loader():
     # If the !dynamic tag is encountered, forward inventory YAML node from
     # ghettobox.yml to modules/{name}/loader.py
@@ -15,7 +33,7 @@ def get_inventory_loader():
         module_name = list(mapping.keys())[0]
         import_path = f"modules.{module_name}.loader"
         module = importlib.import_module(import_path)
-        module.parser(node)
+        module.parser(mapping)
         return {}
 
     loader = yaml.SafeLoader
@@ -57,8 +75,40 @@ def service2role(service_name, service_path):
 
 develop = True
 
+# First pass over file with basic YAML loader to get tags and enabled services
+with open("templates/ghettobox.yml", "r") as infile:
+    gb_yml = yaml.load(infile.read(), Loader=get_tag_logging_loader())
+
+# We look for definitions for all tags in our modules
+for service in gb_yml["services"]:
+    if os.path.exists(f"modules/{service['name']}/tags"):
+        for tag in yml_tags:
+            modname = service["name"]
+            tagname = tag[1:]
+            if os.path.exists(f"modules/{modname}/tags/{tagname}.py"):
+                import_path = f"modules.{modname}.tags.{tagname}"
+                module = importlib.import_module(import_path)
+                tag_loaders[tag] = module.tag
+print(tag_loaders)
+
+
+def get_inventory_loader():
+    # If the !dynamic tag is encountered, forward inventory YAML node from
+    # ghettobox.yml to modules/{name}/loader.py
+
+    yml_loader = yaml.SafeLoader
+    yml_loader.add_constructor(None, lambda loader, node: None)
+    for tag, loader in tag_loaders.items():
+        yml_loader.add_constructor(tag, loader)
+    return yml_loader
+
+
+# TODO don't re-open the file again because that's ugly
 with open("templates/ghettobox.yml", "r") as infile:
     gb_yml = yaml.load(infile.read(), Loader=get_inventory_loader())
+
+print(gb_yml)
+exit()
 
 inventory_yml = {
     "gb_host": {
@@ -95,6 +145,11 @@ if not develop:
     )
 
 
+# First pass - get
+for service in gb_yml["services"]:
+    if service["enabled"]:
+        pass
+
 for service in gb_yml["services"]:
     if service["enabled"]:
         # write service variables to inventory
@@ -111,3 +166,6 @@ for service in gb_yml["services"]:
         else:
             service2role(service["name"], f"modules/{service['name']}")
 base_playbook_yml[0]["roles"].append("finalize")
+
+print(yaml.safe_dump(inventory_yml))
+print(yaml.safe_dump(base_playbook_yml))

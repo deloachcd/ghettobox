@@ -43,16 +43,38 @@ services:
   - name: samba
     enabled: true
     vars:
-      !dynamic
-      samba:
-        users:
-          - name: "{{ gb_user }}"
-            passwd: badpasswd
-        shares:
-          - name: "share"
-            container_path: "/default"
-            host_path: "/path/to/share"
-            options: "yes;no;no;{{ gb_user }}"
+      # Path to the samba share on the server
+      samba_share_path: /path/to/share
+
+      # Username and password for the samba user, written into encrypted
+      # smbpasswd file on provisioner creation
+      samba_user: !smbpasswd
+        username: "{{ gb_user }}"
+        passwd: badpasswd
+
+      # Configuration options for the samba share.
+      #
+      # Volume mount point for {{ share_path }} will be '/samba' inside the container
+      # unless you modify the docker-compose file, so you probably don't want to change
+      # that unless you know what you're doing.
+      #
+      # From the 'help' text from samba.sh:
+      # "<name;/path>[;browse;readonly;guest;users;admins;writelist;comment]"
+      #               Configure a share
+      #               required arg: "<name>;</path>"
+      #               <name> is how it's called for clients
+      #               <path> path to share
+      #               NOTE: for the default values, just leave blank
+      #               [browsable] default:'yes' or 'no'
+      #               [readonly] default:'yes' or 'no'
+      #               [guest] allowed default:'yes' or 'no'
+      #               NOTE: for user lists below, usernames are separated by ','
+      #               [users] allowed default:'all' or list of allowed users
+      #               [admins] allowed default:'none' or list of admin users
+      #               [writelist] list of users that can write to a RO share
+      #               [comment] description of share
+      samba_share_config: "share;/samba;yes;no;no;${samba_user}"
+      
 
   #- watchtower
   #- baikal
