@@ -8,7 +8,7 @@ import importlib
 
 # TODO call tag loaders "handlers" to prevent confusion with YAML loaders
 yml_tags = []
-tag_loaders = {}
+tag_handlers = {}
 
 
 def get_tag_logging_loader():
@@ -83,8 +83,8 @@ for service in gb_yml["services"]:
             if os.path.exists(f"modules/{modname}/tags/{tagname}.py"):
                 import_path = f"modules.{modname}.tags.{tagname}"
                 module = importlib.import_module(import_path)
-                tag_loaders[tag] = module.tag
-print(tag_loaders)
+                tag_handlers[tag] = module.tag
+print(tag_handlers)
 
 
 def get_inventory_loader():
@@ -93,8 +93,8 @@ def get_inventory_loader():
 
     yml_loader = yaml.SafeLoader
     yml_loader.add_constructor(None, lambda loader, node: None)
-    for tag, loader in tag_loaders.items():
-        yml_loader.add_constructor(tag, loader)
+    for tag, handler in tag_handlers.items():
+        yml_loader.add_constructor(tag, handler)
     return yml_loader
 
 
