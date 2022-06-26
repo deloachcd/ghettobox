@@ -6,7 +6,7 @@ import shutil
 import subprocess
 import importlib
 
-
+# TODO call tag loaders "handlers" to prevent confusion with YAML loaders
 yml_tags = []
 tag_loaders = {}
 
