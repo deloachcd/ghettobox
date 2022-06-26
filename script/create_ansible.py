@@ -26,6 +26,8 @@ def get_tag_logging_loader():
 
 
 def service2role(service_name, service_path):
+    global docker_compose_yml
+
     with open(os.path.join(service_path, "service.yml"), "r") as infile:
         service_yml = yaml.safe_load(infile.read())
 
@@ -53,8 +55,17 @@ def service2role(service_name, service_path):
                 directory_path, os.path.join(f"ansible/roles/{service_name}", directory)
             )
     # TODO proxy
+    if "proxy" in service_yml.keys():
+        print(service_yml["proxy"])
+
     # TODO firewall
-    # TODO docker-compose
+
+    # Write docker-compose configuration for service to compound docker-compose.yml
+    # template
+    if "compose" in service_yml.keys():
+        docker_compose_yml["services"][service_name] = service_yml["compose"][
+            service_name
+        ]
 
 
 develop = True
@@ -100,6 +111,7 @@ inventory_yml = {
         },
     }
 }
+docker_compose_yml = {"version": "3", "services": {}}
 
 # TODO warn or archive
 if os.path.exists("ansible/"):
@@ -142,3 +154,4 @@ base_playbook_yml[0]["roles"].append("finalize")
 
 print(yaml.safe_dump(inventory_yml))
 print(yaml.safe_dump(base_playbook_yml))
+print(yaml.safe_dump(docker_compose_yml))
