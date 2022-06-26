@@ -26,16 +26,16 @@ def get_tag_logging_loader():
 
 
 def service2role(service_name, service_path):
-    # TODO make more flexible, so that everything is optional
-    return
     with open(os.path.join(service_path, "service.yml"), "r") as infile:
         service_yml = yaml.safe_load(infile.read())
 
-    # Write tasks from specification to where ansible will see them
+    # Copy tasks from specification to where ansible will see them
     os.makedirs(f"ansible/roles/{service_name}/tasks")
-    with open(f"ansible/roles/{service_name}/tasks/main.yml", "w") as outfile:
-        outfile.write(yaml.safe_dump(service_yml["service"]["tasks"]))
+    if "tasks" in service_yml.keys():
+        with open(f"ansible/roles/{service_name}/tasks/main.yml", "w") as outfile:
+            outfile.write(yaml.safe_dump(service_yml["tasks"]))
 
+    # Copy directories containing supplemental files to where ansible will see them
     for directory in [
         "handlers",
         "templates",
@@ -91,8 +91,6 @@ def get_inventory_loader():
 with open("templates/ghettobox.yml", "r") as infile:
     gb_yml = yaml.load(infile.read(), Loader=get_inventory_loader())
 
-print(gb_yml)
-
 inventory_yml = {
     "gb_host": {
         "hosts": {gb_yml["host"]: ""},
@@ -127,12 +125,6 @@ if not develop:
         ["git", "clone", f"{docker_upstream}", "ansible/roles/docker"], check=True
     )
 
-
-# First pass - get
-for service in gb_yml["services"]:
-    if service["enabled"]:
-        pass
-
 for service in gb_yml["services"]:
     if service["enabled"]:
         # write service variables to inventory
@@ -144,9 +136,7 @@ for service in gb_yml["services"]:
         # write service name to roles
         base_playbook_yml[0]["roles"].append(service["name"])
         # Create ansible role from the service specification
-        if not os.path.exists(f"modules/{service['name']}/service.yml"):
-            print(f"WARN: Cannot find service.yml for {service['name']}")
-        else:
+        if os.path.exists(f"modules/{service['name']}/service.yml"):
             service2role(service["name"], f"modules/{service['name']}")
 base_playbook_yml[0]["roles"].append("finalize")
 
