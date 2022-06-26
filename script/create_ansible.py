@@ -25,22 +25,6 @@ def get_tag_logging_loader():
     return loader
 
 
-def get_inventory_loader():
-    # If the !dynamic tag is encountered, forward inventory YAML node from
-    # ghettobox.yml to modules/{name}/loader.py
-    def dynamic_constructor(loader, node):
-        mapping = loader.construct_mapping(node, deep=True)
-        module_name = list(mapping.keys())[0]
-        import_path = f"modules.{module_name}.loader"
-        module = importlib.import_module(import_path)
-        module.parser(mapping)
-        return {}
-
-    loader = yaml.SafeLoader
-    loader.add_constructor("!dynamic", dynamic_constructor)
-    return loader
-
-
 def service2role(service_name, service_path):
     # TODO make more flexible, so that everything is optional
     return
@@ -108,7 +92,6 @@ with open("templates/ghettobox.yml", "r") as infile:
     gb_yml = yaml.load(infile.read(), Loader=get_inventory_loader())
 
 print(gb_yml)
-exit()
 
 inventory_yml = {
     "gb_host": {
