@@ -1,0 +1,53 @@
+tasks:
+  - name: Lock down the server's firewall with UFW
+    when: gb_lockdown_firewall
+    block:
+      - name: Ensure we have UFW installed for firewall
+        apt:
+          name: ufw
+          state: present
+
+      - name: Disable UFW and set default policy to deny
+        community.general.ufw:
+          state: disabled
+          default: deny
+
+      - name: Allow HTTP/HTTPS connections from LAN
+        community.general.ufw:
+          rule: allow
+          port: "{{ item }}"
+          from: "{{ local_subnet }}"
+        loop:
+          - 80
+          - 443
+
+      - name: Allow HTTPS connections from anywhere
+        community.general.ufw:
+          rule: allow
+          port: 443
+        when: "{{ allow_https_from_anywhere }}"
+
+      - name: Allow SSH connections from anywhere
+        community.general.ufw:
+          rule: allow
+          port: 22
+        when: "{{ allow_https_from_anywhere }}"
+
+      # NOTE: ports added by modules are dynamically added to loop in create_provisioner.py
+      - name: Allow connections to enabled services' ports from LAN [lan_anchor_task]
+        community.general.ufw:
+          rule: allow
+          port: "{{ item }}"
+          from: "{{ local_subnet }}"
+        loop: []
+
+      # NOTE: ports added by modules are dynamically added to loop in create_provisioner.py
+      - name: Allow connections to enabled services' ports from anywhere [wan_anchor_task]
+        community.general.ufw:
+          rule: allow
+          port: "{{ item }}"
+        loop: []
+
+      - name: Enable UFW
+        community.general.ufw:
+          state: enabled

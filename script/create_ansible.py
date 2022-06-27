@@ -30,6 +30,8 @@ def get_tag_logging_loader():
 
 def service2role(service_name, service_path):
     global docker_compose_yml
+    global lan_access_ports
+    global wan_access_ports
 
     with open(os.path.join(service_path, "service.yml"), "r") as infile:
         service_yml = yaml.safe_load(infile.read())
@@ -67,7 +69,14 @@ def service2role(service_name, service_path):
         ) as outfile:
             outfile.write(service_yml["proxy"])
 
-    # TODO firewall
+    # Dynamically construct list of ports to open firewall to, through
+    # global pointer variables
+    if "firewall" in service_yml.keys():
+        for portdef in service_yml["firewall"]:
+            if portdef["scope"] == "lan" or portdef["scope"] == "local":
+                lan_access_ports.append(portdef["port"])
+            if portdef["scope"] == "wan" or portdef["scope"] == "any":
+                wan_access_ports.append(portdef["port"])
 
     # Write docker-compose configuration for service to compound docker-compose.yml
     # template
@@ -79,11 +88,12 @@ def service2role(service_name, service_path):
 
 develop = True
 
-# First pass over file with basic YAML loader to get tags and enabled services
-with open("templates/ghettobox.yml", "r") as infile:
-    gb_yml = yaml.load(infile.read(), Loader=get_tag_logging_loader())
+# First pass over ghettobox.yml with basic YAML loader to get tags and enabled services
+gb_file = open("templates/ghettobox.yml", "r")
+gb_yml = yaml.load(gb_file.read(), Loader=get_tag_logging_loader())
+rewind(gb_file)
 
-# We look for definitions for all tags in our modules
+# Search for handlers for all encountered tags in our modules
 for service in gb_yml["services"]:
     if os.path.exists(f"modules/{service['name']}/tags"):
         for tag in yml_tags:
@@ -93,7 +103,6 @@ for service in gb_yml["services"]:
                 import_path = f"modules.{modname}.tags.{tagname}"
                 module = importlib.import_module(import_path)
                 tag_handlers[tag] = module.tag
-print(tag_handlers)
 
 
 def get_inventory_loader():
@@ -107,9 +116,11 @@ def get_inventory_loader():
     return yml_loader
 
 
-# TODO don't re-open the file again because that's ugly
-with open("templates/ghettobox.yml", "r") as infile:
-    gb_yml = yaml.load(infile.read(), Loader=get_inventory_loader())
+# Second pass over ghettobox.yml, construct complete object now that we've
+# retrieved all the tag handlers we're going to be able to find from our
+# modules
+gb_yml = yaml.load(gb_file.read(), Loader=get_inventory_loader())
+gb_file.close()
 
 inventory_yml = {
     "gb_host": {
@@ -121,6 +132,23 @@ inventory_yml = {
     }
 }
 docker_compose_yml = {"version": "3", "services": {}}
+
+with open("core/firewall/service.yml") as infile:
+    firewall_tasks_yml = yaml.safe_load(infile.read())
+
+# go through firewall tasks, find the tasks for applying access from LAN
+# and WAN to ports specified in modules, and point to to the list they
+# will loop through with "lan_access_ports" and "wan_access_ports" variables,
+# respectively
+for task in firewall_tasks_yml["tasks"][0]["block"]:
+    if "[lan_anchor_task]" in task["name"]:
+        task["name"] = task["name"].replace("[lan_anchor_task]", "")
+        lan_access_ports = task["loop"]
+    elif "[wan_anchor_task]" in task["name"]:
+        task["name"] = task["name"].replace("[wan_anchor_task]", "")
+        wan_access_ports = task["loop"]
+
+# TODO nginx base config file templated
 
 # TODO warn or archive
 if os.path.exists("ansible/"):
@@ -155,7 +183,11 @@ if not os.path.exists("ansible/roles/nginx/files/nginx/services"):
 service2role("nginx", "core/nginx")
 
 ## firewall
+os.makedirs("ansible/roles/firewall/tasks")
+with open("ansible/roles/firewall/tasks/main.yml", "w") as outfile:
+    outfile.write(yaml.safe_dump(firewall_tasks_yml))
 
+## services defined in modules
 for service in gb_yml["services"]:
     if service["enabled"]:
         # write service variables to inventory
@@ -174,3 +206,4 @@ base_playbook_yml[0]["roles"].append("finalize")
 print(yaml.safe_dump(inventory_yml))
 print(yaml.safe_dump(base_playbook_yml))
 print(yaml.safe_dump(docker_compose_yml))
+print(yaml.safe_dump(firewall_tasks_yml))

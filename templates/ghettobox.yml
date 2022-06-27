@@ -19,6 +19,12 @@ vars:
   # firewall configuration to accomodate them.
   lockdown_firewall: true
 
+  # Whether or not to allow HTTPS connections on port 443 from the internet
+  allow_https_from_anywhere: true
+
+  # Whether or not to allow SSH connections on port 22 from the internet
+  allow_ssh_from_anywhere: true
+
   # Whether or not to install docker as part of server provisioning
   install_docker: true
 
