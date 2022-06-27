@@ -201,9 +201,16 @@ for service in gb_yml["services"]:
         # Create ansible role from the service specification
         if os.path.exists(f"modules/{service['name']}/service.yml"):
             service2role(service["name"], f"modules/{service['name']}")
-base_playbook_yml[0]["roles"].append("finalize")
 
-print(yaml.safe_dump(inventory_yml))
-print(yaml.safe_dump(base_playbook_yml))
-print(yaml.safe_dump(docker_compose_yml))
-print(yaml.safe_dump(firewall_tasks_yml))
+## finalize
+base_playbook_yml[0]["roles"].append("finalize")
+os.makedirs("ansible/roles/finalize/templates")
+with open("ansible/roles/finalize/templates/docker-compose.yml", "w") as outfile:
+    outfile.write(yaml.safe_dump(docker_compose_yml))
+service2role("finalize", "core/finalize")
+
+with open("ansible/main.yml", "w") as outfile:
+    outfile.write(yaml.safe_dump(base_playbook_yml))
+
+with open("ansible/inventory", "w") as outfile:
+    outfile.write(yaml.safe_dump(inventory_yml))
