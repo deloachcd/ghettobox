@@ -6,9 +6,12 @@ import shutil
 import subprocess
 import importlib
 
-# TODO call tag loaders "handlers" to prevent confusion with YAML loaders
 yml_tags = []
 tag_handlers = {}
+
+
+def rewind(_file):
+    _file.seek(0)
 
 
 def get_tag_logging_loader():
@@ -50,13 +53,19 @@ def service2role(service_name, service_path):
         "lookup_plugins",
     ]:
         directory_path = os.path.join(service_path, directory)
-        if os.path.exists(directory_path):
+        if os.path.exists(directory_path) and not os.path.exists(
+            f"ansible/roles/{service_name}"
+        ):
             shutil.copytree(
                 directory_path, os.path.join(f"ansible/roles/{service_name}", directory)
             )
-    # TODO proxy
+
+    # Write's nginx config snippet for the proxy to nginx directory
     if "proxy" in service_yml.keys():
-        print(service_yml["proxy"])
+        with open(
+            f"ansible/roles/nginx/files/nginx/services/{service_name}.conf", "w"
+        ) as outfile:
+            outfile.write(service_yml["proxy"])
 
     # TODO firewall
 
@@ -121,10 +130,10 @@ os.makedirs("ansible/roles")
 
 # The roles in this list are generated before the ones in our modules
 base_playbook_yml = [
-    {"hosts": "gb_host", "roles": ["docker", "setup", "proxy", "firewall"]}
+    {"hosts": "gb_host", "roles": ["docker", "setup", "nginx", "firewall"]}
 ]
 
-## First, the externally-developed role to install docker is checked out
+## docker
 # NOTE I don't use submodules to checkout this external git repo, because submodules are
 #      the most broken, unintuitive trash feature that git includes.
 if gb_yml["vars"]["host_arch"].upper() == "ARM":
@@ -136,6 +145,16 @@ if not develop:
     subprocess.run(
         ["git", "clone", f"{docker_upstream}", "ansible/roles/docker"], check=True
     )
+
+## setup
+service2role("setup", "core/setup")
+
+## nginx reverse proxy
+if not os.path.exists("ansible/roles/nginx/files/nginx/services"):
+    os.makedirs("ansible/roles/nginx/files/nginx/services")
+service2role("nginx", "core/nginx")
+
+## firewall
 
 for service in gb_yml["services"]:
     if service["enabled"]:
