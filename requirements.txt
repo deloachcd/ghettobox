@@ -1,3 +1,4 @@
+oyaml
 ansible
 passlib
 bcrypt

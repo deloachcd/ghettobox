@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import yaml
+import oyaml as yaml
 import os
 import shutil
 import subprocess
