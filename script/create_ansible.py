@@ -6,6 +6,8 @@ import shutil
 import subprocess
 import importlib
 
+# TODO get_yaml, dump_yaml functions to clean things up here
+
 # global variables for logging encountered YAML tags, and storing/mapping functions
 # for handling them, loaded from modules
 yml_tags = []
