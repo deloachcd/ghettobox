@@ -178,10 +178,10 @@ firewall_tasks_yml = load_yaml("core/firewall/service.yml")
 # respectively
 for task in firewall_tasks_yml["tasks"][0]["block"]:
     if "[lan_anchor_task]" in task["name"]:
-        task["name"] = task["name"].replace("[lan_anchor_task]", "")
+        task["name"] = task["name"].replace(" [lan_anchor_task]", "")
         lan_access_ports = task["loop"]
     elif "[wan_anchor_task]" in task["name"]:
-        task["name"] = task["name"].replace("[wan_anchor_task]", "")
+        task["name"] = task["name"].replace(" [wan_anchor_task]", "")
         wan_access_ports = task["loop"]
 
 # The roles in this list are generated before the ones in our modules
@@ -212,9 +212,8 @@ if not os.path.exists("ansible/roles/nginx/files/nginx/services"):
     os.makedirs("ansible/roles/nginx/files/nginx/services")
 service2role("nginx", "core/nginx")
 
-## firewall
+## firewall (tasks dynamically updated through services before dumping)
 os.makedirs("ansible/roles/firewall/tasks")
-dump_yaml(firewall_tasks_yml, "ansible/roles/firewall/tasks/main.yml")
 
 ## services defined in modules
 for service in gb_yml["services"]:
@@ -242,6 +241,7 @@ os.makedirs("ansible/roles/finalize/templates")
 dump_yaml(docker_compose_yml, "ansible/roles/finalize/templates/docker-compose.yml")
 service2role("finalize", "core/finalize")
 
+dump_yaml(firewall_tasks_yml, "ansible/roles/firewall/tasks/main.yml")
 dump_yaml(base_playbook_yml, "ansible/main.yml")
 dump_yaml(inventory_yml, "ansible/inventory.ini")
 
