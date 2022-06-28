@@ -6,8 +6,13 @@ import shutil
 import subprocess
 import importlib
 
+# global variables for logging encountered YAML tags, and storing/mapping functions
+# for handling them, loaded from modules
 yml_tags = []
 tag_handlers = {}
+
+# flag to skip docker role cloning and confirmation to nuke existing ansible provisioner
+develop = True
 
 
 def rewind(_file):
@@ -15,8 +20,8 @@ def rewind(_file):
 
 
 def get_tag_logging_loader():
-    # Returns a loader which logs all YAML tags, so that they can be
-    # dynamically loaded from enabled services
+    """Returns a loader which logs all YAML tags, so that they can be
+    dynamically loaded from enabled services"""
     global yml_tags
 
     def log_tag(loader, node):
@@ -29,6 +34,8 @@ def get_tag_logging_loader():
 
 
 def service2role(service_name, service_path):
+    """Uses global variables and direct file access to generate ansible roles
+    from service modules by reading their service.yml files"""
     global docker_compose_yml
     global lan_access_ports
     global wan_access_ports
@@ -37,7 +44,8 @@ def service2role(service_name, service_path):
         service_yml = yaml.safe_load(infile.read())
 
     # Copy tasks from specification to where ansible will see them
-    os.makedirs(f"ansible/roles/{service_name}/tasks")
+    service_root = f"ansible/roles/{service_name}"
+    os.makedirs(os.path.join(service_root, "tasks"))
     if "tasks" in service_yml.keys():
         with open(f"ansible/roles/{service_name}/tasks/main.yml", "w") as outfile:
             outfile.write(yaml.safe_dump(service_yml["tasks"]))
@@ -56,11 +64,9 @@ def service2role(service_name, service_path):
     ]:
         directory_path = os.path.join(service_path, directory)
         if os.path.exists(directory_path) and not os.path.exists(
-            f"ansible/roles/{service_name}"
+            os.path.join(service_root, directory)
         ):
-            shutil.copytree(
-                directory_path, os.path.join(f"ansible/roles/{service_name}", directory)
-            )
+            shutil.copytree(directory_path, os.path.join(service_root, directory))
 
     # Write's nginx config snippet for the proxy to nginx directory
     if "proxy" in service_yml.keys():
@@ -85,8 +91,6 @@ def service2role(service_name, service_path):
             service_name
         ]
 
-
-develop = True
 
 # First pass over ghettobox.yml with basic YAML loader to get tags and enabled services
 gb_file = open("templates/ghettobox.yml", "r")
@@ -122,6 +126,8 @@ def get_inventory_loader():
 gb_yml = yaml.load(gb_file.read(), Loader=get_inventory_loader())
 gb_file.close()
 
+# global variables for accessing inventory, firewall ansible tasks and
+# docker-compose file shared by all services
 inventory_yml = {
     "gb_host": {
         "hosts": {gb_yml["host"]: ""},
@@ -135,7 +141,6 @@ docker_compose_yml = {"version": "3", "services": {}}
 
 with open("core/firewall/service.yml") as infile:
     firewall_tasks_yml = yaml.safe_load(infile.read())
-
 # go through firewall tasks, find the tasks for applying access from LAN
 # and WAN to ports specified in modules, and point to to the list they
 # will loop through with "lan_access_ports" and "wan_access_ports" variables,
@@ -148,10 +153,17 @@ for task in firewall_tasks_yml["tasks"][0]["block"]:
         task["name"] = task["name"].replace("[wan_anchor_task]", "")
         wan_access_ports = task["loop"]
 
-# TODO nginx base config file templated
-
-# TODO warn or archive
-if os.path.exists("ansible/"):
+if os.path.exists("ansible/") and not develop:
+    print(
+        "Warning: existing ansible provisioner files will be deleted to create a new one."
+    )
+    answer = input("Continue? (y/n) ")
+    if answer == "y" or answer == "yes":
+        shutil.rmtree("ansible/")
+    else:
+        print("Aborting.")
+        exit(0)
+elif os.path.exists("ansible/"):
     shutil.rmtree("ansible/")
 
 os.makedirs("ansible/roles")
@@ -160,6 +172,8 @@ os.makedirs("ansible/roles")
 base_playbook_yml = [
     {"hosts": "gb_host", "roles": ["docker", "setup", "nginx", "firewall"]}
 ]
+
+### now that all global variables are defined, roles can be generated from services
 
 ## docker
 # NOTE I don't use submodules to checkout this external git repo, because submodules are
@@ -214,3 +228,5 @@ with open("ansible/main.yml", "w") as outfile:
 
 with open("ansible/inventory", "w") as outfile:
     outfile.write(yaml.safe_dump(inventory_yml))
+
+print("Successfully generated provisioner in 'ansible' directory.")
