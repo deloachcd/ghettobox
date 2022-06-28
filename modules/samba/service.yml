@@ -1,0 +1,39 @@
+firewall:
+  - port: 139
+    scope: lan
+
+  - port: 445
+    scope: lan
+
+tasks:
+  - name: Ensure our user owns the samba share
+    file:
+      path: "{{ samba_share_path }}"
+      owner: "{{ gb_user }}"
+      recurse: yes
+    become: yes
+
+  - name: Ensure we have a directory for smbpasswd file
+    file:
+      path: ghettobox/samba
+      state: directory
+
+  - name: Copy over smbpasswd file containing hashed credentials
+    copy:
+      src: smbpasswd
+      dest: ghettobox/samba
+
+compose:
+  samba:
+    image: dperson/samba
+    ports:
+      - 139:139
+      - 445:445
+    volumes:
+      - "{{ samba_share_path }}:/samba"
+      - "samba/smbpasswd:/etc/samba/private/smbpasswd"
+    command: >
+      -i '/etc/samba/private/smbpasswd'
+      -s '{{ samba_share_config }}'
+      -p
+    restart: unless-stopped

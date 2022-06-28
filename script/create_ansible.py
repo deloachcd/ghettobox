@@ -92,6 +92,24 @@ def service2role(service_name, service_path):
         ]
 
 
+# Recursively delete existing provisioner if exists to have a blank slate
+# for new one
+if os.path.exists("ansible/") and not develop:
+    print(
+        "Warning: existing ansible provisioner files will be deleted to create a new one."
+    )
+    answer = input("Continue? (y/n) ")
+    if answer == "y" or answer == "yes":
+        shutil.rmtree("ansible/")
+    else:
+        print("Aborting.")
+        exit(0)
+elif os.path.exists("ansible/"):
+    shutil.rmtree("ansible/")
+
+# Create empty directories to be populated with provisioner files
+os.makedirs("ansible/roles")
+
 # First pass over ghettobox.yml with basic YAML loader to get tags and enabled services
 gb_file = open("templates/ghettobox.yml", "r")
 gb_yml = yaml.load(gb_file.read(), Loader=get_tag_logging_loader())
@@ -153,21 +171,6 @@ for task in firewall_tasks_yml["tasks"][0]["block"]:
         task["name"] = task["name"].replace("[wan_anchor_task]", "")
         wan_access_ports = task["loop"]
 
-if os.path.exists("ansible/") and not develop:
-    print(
-        "Warning: existing ansible provisioner files will be deleted to create a new one."
-    )
-    answer = input("Continue? (y/n) ")
-    if answer == "y" or answer == "yes":
-        shutil.rmtree("ansible/")
-    else:
-        print("Aborting.")
-        exit(0)
-elif os.path.exists("ansible/"):
-    shutil.rmtree("ansible/")
-
-os.makedirs("ansible/roles")
-
 # The roles in this list are generated before the ones in our modules
 base_playbook_yml = [
     {"hosts": "gb_host", "roles": ["docker", "setup", "nginx", "firewall"]}
@@ -204,8 +207,13 @@ with open("ansible/roles/firewall/tasks/main.yml", "w") as outfile:
 ## services defined in modules
 for service in gb_yml["services"]:
     if service["enabled"]:
-        # write service variables to inventory
-        # TODO encrypted password files for samba and radicale
+        ## get rid of keys with empty values
+        # NOTE cast .items() to list to prevent runtime error from
+        # dict size changing during iteration
+        for key, value in list(service["vars"].items()):
+            if not value or value == "":
+                del service["vars"][key]
+        ## write service variables to inventory
         inventory_yml["gb_host"]["vars"] = {
             **inventory_yml["gb_host"]["vars"],
             **service["vars"],
