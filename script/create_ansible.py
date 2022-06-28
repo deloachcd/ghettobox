@@ -6,8 +6,6 @@ import shutil
 import subprocess
 import importlib
 
-# TODO get_yaml, dump_yaml functions to clean things up here
-
 # global variables for logging encountered YAML tags, and storing/mapping functions
 # for handling them, loaded from modules
 yml_tags = []
@@ -15,6 +13,22 @@ tag_handlers = {}
 
 # flag to skip docker role cloning and confirmation to nuke existing ansible provisioner
 develop = True
+
+
+def dump_yaml(yaml_obj, path):
+    with open(path, "w") as outfile:
+        outfile.write(yaml.safe_dump(yaml_obj))
+
+
+def write_yaml(yaml_obj, path):
+    with open(path, "w") as outfile:
+        outfile.write(yaml_obj)
+
+
+def load_yaml(path):
+    with open(path) as infile:
+        yaml_obj = yaml.safe_load(infile.read())
+    return yaml_obj
 
 
 def rewind(_file):
@@ -42,15 +56,13 @@ def service2role(service_name, service_path):
     global lan_access_ports
     global wan_access_ports
 
-    with open(os.path.join(service_path, "service.yml"), "r") as infile:
-        service_yml = yaml.safe_load(infile.read())
+    service_yml = load_yaml(os.path.join(service_path, "service.yml"))
 
     # Copy tasks from specification to where ansible will see them
     service_root = f"ansible/roles/{service_name}"
     os.makedirs(os.path.join(service_root, "tasks"))
     if "tasks" in service_yml.keys():
-        with open(f"ansible/roles/{service_name}/tasks/main.yml", "w") as outfile:
-            outfile.write(yaml.safe_dump(service_yml["tasks"]))
+        dump_yaml(service_yml["tasks"], f"ansible/roles/{service_name}/tasks/main.yml")
 
     # Copy directories containing supplemental files to where ansible will see them
     for directory in [
@@ -72,10 +84,10 @@ def service2role(service_name, service_path):
 
     # Write's nginx config snippet for the proxy to nginx directory
     if "proxy" in service_yml.keys():
-        with open(
-            f"ansible/roles/nginx/files/nginx/services/{service_name}.conf", "w"
-        ) as outfile:
-            outfile.write(service_yml["proxy"])
+        write_yaml(
+            service_yml["proxy"],
+            f"ansible/roles/nginx/files/nginx/services/{service_name}.conf",
+        )
 
     # Dynamically construct list of ports to open firewall to, through
     # global pointer variables
@@ -159,8 +171,7 @@ inventory_yml = {
 }
 docker_compose_yml = {"version": "3", "services": {}}
 
-with open("core/firewall/service.yml") as infile:
-    firewall_tasks_yml = yaml.safe_load(infile.read())
+firewall_tasks_yml = load_yaml("core/firewall/service.yml")
 # go through firewall tasks, find the tasks for applying access from LAN
 # and WAN to ports specified in modules, and point to to the list they
 # will loop through with "lan_access_ports" and "wan_access_ports" variables,
@@ -203,8 +214,7 @@ service2role("nginx", "core/nginx")
 
 ## firewall
 os.makedirs("ansible/roles/firewall/tasks")
-with open("ansible/roles/firewall/tasks/main.yml", "w") as outfile:
-    outfile.write(yaml.safe_dump(firewall_tasks_yml))
+dump_yaml(firewall_tasks_yml, "ansible/roles/firewall/tasks/main.yml")
 
 ## services defined in modules
 for service in gb_yml["services"]:
@@ -229,14 +239,10 @@ for service in gb_yml["services"]:
 ## finalize
 base_playbook_yml[0]["roles"].append("finalize")
 os.makedirs("ansible/roles/finalize/templates")
-with open("ansible/roles/finalize/templates/docker-compose.yml", "w") as outfile:
-    outfile.write(yaml.safe_dump(docker_compose_yml))
+dump_yaml(docker_compose_yml, "ansible/roles/finalize/templates/docker-compose.yml")
 service2role("finalize", "core/finalize")
 
-with open("ansible/main.yml", "w") as outfile:
-    outfile.write(yaml.safe_dump(base_playbook_yml))
-
-with open("ansible/inventory", "w") as outfile:
-    outfile.write(yaml.safe_dump(inventory_yml))
+dump_yaml(base_playbook_yml, "ansible/main.yml")
+dump_yaml(inventory_yml, "ansible/inventory.ini")
 
 print("Successfully generated provisioner in 'ansible' directory.")
