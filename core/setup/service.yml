@@ -13,6 +13,18 @@ tasks:
   - set_fact:
       gb_user_gid: "{{ user_gid.stdout }}"
 
+  - name: Ensure gb_data_location exists and is a directory
+    file:
+      path: "{{ gb_data_location }}"
+      state: directory
+
+  - name: Symlink ~/ghettobox to gb_data_location (if paths differ)
+    file:
+      src: "{{ gb_data_location }}"
+      path: ghettobox
+      state: link
+    when: "{{ gb_data_location }}" != "ghettobox"
+
   - name: Ensure we have a directory for ghettobox service data on the host
     file:
       path: ghettobox/data

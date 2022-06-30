@@ -9,6 +9,12 @@ vars:
   # via SSH public key authentication.
   gb_user: example_username
 
+  # Location for ghettobox services to store data.
+  # A value of "ghettobox" will use default directory ~/ghettobox, while
+  # any other value will use the path specified, and create ~/ghettobox
+  # as a symlink to it.
+  gb_data_location: ghettobox
+
   # Private IP address range for the server's local area network
   local_subnet: "192.168.0.0/16"
 
@@ -88,8 +94,3 @@ services:
       radicale_user: !htpasswd
         username: "{{ gb_user }}"
         passwd: badpasswd
-      
-
-  #- watchtower
-  #- baikal
-  #- borg
