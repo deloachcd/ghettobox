@@ -79,7 +79,15 @@ services:
       #               [admins] allowed default:'none' or list of admin users
       #               [writelist] list of users that can write to a RO share
       #               [comment] description of share
-      samba_share_config: "share;/samba;yes;no;no;${samba_user}"
+      samba_share_config: "share;/samba;yes;no;no;{{ gb_user }}"
+
+  - name: radicale
+    enabled: true
+    vars:
+      # Path to the samba share on the server
+      radicale_user: !htpasswd
+        username: "{{ gb_user }}"
+        passwd: badpasswd
       
 
   #- watchtower

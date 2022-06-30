@@ -2,3 +2,4 @@ oyaml
 ansible
 passlib
 bcrypt
+jinja2

@@ -5,6 +5,8 @@ import os
 import shutil
 import subprocess
 import importlib
+import jinja2
+import re
 
 # global variables for logging encountered YAML tags, and storing/mapping functions
 # for handling them, loaded from modules
@@ -47,6 +49,16 @@ def get_tag_logging_loader():
     loader = yaml.SafeLoader
     loader.add_constructor(None, log_tag)
     return loader
+
+
+def get_inventory_loader():
+    global tag_handlers
+
+    yml_loader = yaml.SafeLoader
+    yml_loader.add_constructor(None, lambda loader, node: node)
+    for tag, handler in tag_handlers.items():
+        yml_loader.add_constructor(tag, handler)
+    return yml_loader
 
 
 def service2role(service_name, service_path):
@@ -126,8 +138,20 @@ os.makedirs("ansible/roles")
 
 # First pass over ghettobox.yml with basic YAML loader to get tags and enabled services
 gb_file = open("templates/ghettobox.yml", "r")
-gb_yml = yaml.load(gb_file.read(), Loader=get_tag_logging_loader())
-rewind(gb_file)
+gb_file_content = gb_file.read()
+gb_yml = yaml.load(gb_file_content, Loader=get_tag_logging_loader())
+
+# Utilize YAML object to construct jinja2 object for variable substitution
+jinja2_data = {}
+for key, value in gb_yml["vars"].items():
+    jinja2_data[key] = value
+for service in gb_yml["services"]:
+    if service["enabled"]:
+        for key, value in service["vars"].items():
+            jinja2_data[key] = value
+
+# Render a version of our YAML file, but with variables substituted
+gb_file_substituted = jinja2.Template(gb_file_content).render(jinja2_data)
 
 # Search for handlers for all encountered tags in our modules
 for service in gb_yml["services"]:
@@ -140,22 +164,10 @@ for service in gb_yml["services"]:
                 module = importlib.import_module(import_path)
                 tag_handlers[tag] = module.tag
 
-
-def get_inventory_loader():
-    # If the !dynamic tag is encountered, forward inventory YAML node from
-    # ghettobox.yml to modules/{name}/loader.py
-
-    yml_loader = yaml.SafeLoader
-    yml_loader.add_constructor(None, lambda loader, node: None)
-    for tag, handler in tag_handlers.items():
-        yml_loader.add_constructor(tag, handler)
-    return yml_loader
-
-
-# Second pass over ghettobox.yml, construct complete object now that we've
-# retrieved all the tag handlers we're going to be able to find from our
-# modules
-gb_yml = yaml.load(gb_file.read(), Loader=get_inventory_loader())
+# Now that we've populated tag_handlers, we can load from our variable
+# substituted file to get the YAML object we'll be working with to
+# create our roles
+gb_yml = yaml.load(gb_file_substituted, Loader=get_inventory_loader())
 gb_file.close()
 
 # global variables for accessing inventory, firewall ansible tasks and
@@ -243,6 +255,6 @@ service2role("finalize", "core/finalize")
 
 dump_yaml(firewall_tasks_yml, "ansible/roles/firewall/tasks/main.yml")
 dump_yaml(base_playbook_yml, "ansible/main.yml")
-dump_yaml(inventory_yml, "ansible/inventory.ini")
+dump_yaml(inventory_yml, "ansible/inventory.yml")
 
 print("Successfully generated provisioner in 'ansible' directory.")
