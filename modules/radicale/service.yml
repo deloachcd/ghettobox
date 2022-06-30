@@ -1,0 +1,58 @@
+proxy: |
+  location /cal/ {
+    proxy_pass http://localhost:5232/;
+    proxy_set_header X-Script-Name /radicale;
+    proxy_pass_header Authorization;
+  }
+
+firewall:
+  - port: 5232
+    scope: lan
+
+compose:
+  radicale:
+    image: tomsquest/docker-radicale
+    container_name: radicale
+    ports:
+      - 5232:5232
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+      - CHOWN
+      - KILL
+    healthcheck:
+      test: curl -f http://127.0.0.1:5232 || exit 1
+      interval: 30s
+      retries: 3
+    restart: unless-stopped
+    volumes:
+      - ./radicale/data:/data
+      - ./radicale/config/radicale.ini:/etc/radicale/config
+      - ./radicale/config/users:/etc/radicale/users
+
+tasks:
+  - name: Ensure we have a directory for radicale data
+    file:
+      path: ghettobox/radicale/data
+      state: directory
+
+  - name: Ensure we have a directory for radicale config
+    file:
+      path: ghettobox/radicale/config
+      state: directory
+
+  - name: Copy over radicale config file to the config directory
+    copy:
+      src: radicale.ini
+      dest: ghettobox/radicale/config
+
+  - name: Copy over encrypted users file to the config directory
+    copy:
+      src: users
+      dest: ghettobox/radicale/config
