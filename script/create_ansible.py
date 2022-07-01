@@ -63,12 +63,12 @@ def get_inventory_loader():
 
 def service2role(service_name, service_path):
     """Uses global variables and direct file access to generate ansible roles
-    from service modules by reading their service.yml files"""
+    from service modules by reading their service.yml.j2 files"""
     global docker_compose_yml
     global lan_access_ports
     global wan_access_ports
 
-    service_yml = load_yaml(os.path.join(service_path, "service.yml"))
+    service_yml = load_yaml(os.path.join(service_path, "service.yml.j2"))
 
     # Copy tasks from specification to where ansible will see them
     service_root = f"ansible/roles/{service_name}"
@@ -183,7 +183,7 @@ inventory_yml = {
 }
 docker_compose_yml = {"version": "3", "services": {}}
 
-firewall_tasks_yml = load_yaml("core/firewall/service.yml")
+firewall_tasks_yml = load_yaml("core/firewall/service.yml.j2")
 # go through firewall tasks, find the tasks for applying access from LAN
 # and WAN to ports specified in modules, and point to to the list they
 # will loop through with "lan_access_ports" and "wan_access_ports" variables,
@@ -244,7 +244,7 @@ for service in gb_yml["services"]:
         # write service name to roles
         base_playbook_yml[0]["roles"].append(service["name"])
         # Create ansible role from the service specification
-        if os.path.exists(f"modules/{service['name']}/service.yml"):
+        if os.path.exists(f"modules/{service['name']}/service.yml.j2"):
             service2role(service["name"], f"modules/{service['name']}")
 
 ## finalize

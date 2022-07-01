@@ -94,3 +94,10 @@ services:
       radicale_user: !htpasswd
         username: "{{ gb_user }}"
         passwd: badpasswd
+
+  - name: restic
+    enabled: true
+    vars:
+      restic_backup_dirs:
+        - /path/to/dir1
+        - /path/to/dir2
