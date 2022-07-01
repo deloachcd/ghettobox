@@ -63,12 +63,12 @@ def get_inventory_loader():
 
 def service2role(service_name, service_path):
     """Uses global variables and direct file access to generate ansible roles
-    from service modules by reading their service.yml.j2 files"""
+    from service modules by reading their service.yml files"""
     global docker_compose_yml
     global lan_access_ports
     global wan_access_ports
 
-    service_yml = load_yaml(os.path.join(service_path, "service.yml.j2"))
+    service_yml = load_yaml(os.path.join(service_path, "service.yml"))
 
     # Copy tasks from specification to where ansible will see them
     service_root = f"ansible/roles/{service_name}"
@@ -137,7 +137,7 @@ elif os.path.exists("ansible/"):
 os.makedirs("ansible/roles")
 
 # First pass over ghettobox.yml with basic YAML loader to get tags and enabled services
-gb_file = open("templates/ghettobox.yml", "r")
+gb_file = open("user/ghettobox.yml", "r")
 gb_file_content = gb_file.read()
 gb_yml = yaml.load(gb_file_content, Loader=get_tag_logging_loader())
 
@@ -183,7 +183,7 @@ inventory_yml = {
 }
 docker_compose_yml = {"version": "3", "services": {}}
 
-firewall_tasks_yml = load_yaml("core/firewall/service.yml.j2")
+firewall_tasks_yml = load_yaml("core/firewall/service.yml")
 # go through firewall tasks, find the tasks for applying access from LAN
 # and WAN to ports specified in modules, and point to to the list they
 # will loop through with "lan_access_ports" and "wan_access_ports" variables,
@@ -244,7 +244,7 @@ for service in gb_yml["services"]:
         # write service name to roles
         base_playbook_yml[0]["roles"].append(service["name"])
         # Create ansible role from the service specification
-        if os.path.exists(f"modules/{service['name']}/service.yml.j2"):
+        if os.path.exists(f"modules/{service['name']}/service.yml"):
             service2role(service["name"], f"modules/{service['name']}")
 
 ## finalize

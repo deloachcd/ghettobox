@@ -1,0 +1,5 @@
+#+attr_html :width 400
+[[./img/ghettobox.png]]
+
+* ghettobox
+Provisioning servers from a single file.
