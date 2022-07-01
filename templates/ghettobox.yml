@@ -98,6 +98,4 @@ services:
   - name: restic
     enabled: true
     vars:
-      restic_backup_dirs:
-        - /path/to/dir1
-        - /path/to/dir2
+      restic_backup_path: "/path/to/backup/sources"

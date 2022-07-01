@@ -1,6 +1,0 @@
-- name: Ensure our user owns the samba share
-  file:
-    path: "{{ samba_share_path }}"
-    owner: "{{ gb_user }}"
-    recurse: yes
-  become: yes
