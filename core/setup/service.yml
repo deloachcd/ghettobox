@@ -23,7 +23,7 @@ tasks:
       src: "{{ gb_data_location }}"
       path: ghettobox
       state: link
-    when: "{{ gb_data_location }}" != "ghettobox"
+    when: not "{{ gb_data_location }}" == "ghettobox"
 
   - name: Ensure we have a directory for ghettobox service data on the host
     file:

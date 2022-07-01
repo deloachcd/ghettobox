@@ -5,16 +5,14 @@ docker-compose:
       BACKUP_CRON: "0 0 3 * * *"
       RESTIC_REPOSITORY: my-repo:/restic
       RESTIC_PASSWORD: ghettobox
-      RESTIC_BACKUP_SOURCES: /mnt/volumes
+      RESTIC_BACKUP_SOURCES: /mnt/restic
       RESTIC_BACKUP_ARGS: >-
         --tag docker-volumes
         --verbose
       RESTIC_FORGET_ARGS: "--keep-last 7"
       TZ: America/Denver
     volumes:
-      {% for dir in restic_backup_dirs %}
-        - "{{ dir }}:/mnt/volumes/{{ dir | basename }}"
-      {% endfor %}
+      - "{{ restic_backup_path }}:/mnt/restic:ro"
 
   prune:
     image: mazzolino/restic
