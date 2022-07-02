@@ -11,8 +11,8 @@ tasks:
 
   - name: Copy over proxy config files for the services
     copy:
-      src: services
-      path: "{{ gb_root }}/volumes/nginx"
+      src: services 
+      dest: "{{ gb_root }}/volumes/nginx"
 
 compose:
   nginx:

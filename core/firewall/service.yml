@@ -1,6 +1,7 @@
 tasks:
   - name: Lock down the server's firewall with UFW
-    when: gb_lockdown_firewall
+    when: lockdown_firewall
+    become: true
     block:
       - name: Ensure we have UFW installed for firewall
         apt:
@@ -25,13 +26,13 @@ tasks:
         community.general.ufw:
           rule: allow
           port: 443
-        when: "{{ allow_https_from_anywhere }}"
+        when: allow_https_from_anywhere
 
       - name: Allow SSH connections from anywhere
         community.general.ufw:
           rule: allow
           port: 22
-        when: "{{ allow_https_from_anywhere }}"
+        when: allow_ssh_from_anywhere
 
       # NOTE: ports added by modules are dynamically added to loop in create_provisioner.py
       - name: Allow connections to service-enabled ports from LAN [lan_anchor_task]

@@ -14,7 +14,7 @@ yml_tags = []
 tag_handlers = {}
 
 # flag to skip docker role cloning and confirmation to nuke existing ansible provisioner
-develop = True
+develop = False
 
 
 def dump_yaml(yaml_obj, path):
@@ -98,7 +98,7 @@ def service2role(service_name, service_path):
     if "proxy" in service_yml.keys():
         write_yaml(
             service_yml["proxy"],
-            f"ansible/roles/nginx/files/nginx/services/{service_name}.conf",
+            f"ansible/roles/nginx/files/services/{service_name}.conf",
         )
 
     # Dynamically construct list of ports to open firewall to, through
@@ -182,12 +182,12 @@ inventory_yml = {
 }
 docker_compose_yml = {"version": "3", "services": {}}
 
-firewall_tasks_yml = load_yaml("core/firewall/service.yml")
+firewall_service_yml = load_yaml("core/firewall/service.yml")
 # go through firewall tasks, find the tasks for applying access from LAN
 # and WAN to ports specified in modules, and point to to the list they
 # will loop through with "lan_access_ports" and "wan_access_ports" variables,
 # respectively
-for task in firewall_tasks_yml["tasks"][0]["block"]:
+for task in firewall_service_yml["tasks"][0]["block"]:
     if "[lan_anchor_task]" in task["name"]:
         task["name"] = task["name"].replace(" [lan_anchor_task]", "")
         lan_access_ports = task["loop"]
@@ -197,7 +197,10 @@ for task in firewall_tasks_yml["tasks"][0]["block"]:
 
 # The roles in this list are generated before the ones in our modules
 base_playbook_yml = [
-    {"hosts": "gb_host", "roles": ["docker", "setup", "nginx", "firewall"]}
+    {
+        "hosts": "gb_host",
+        "roles": [{"role": "docker", "become": "yes"}, "setup", "nginx", "firewall"],
+    }
 ]
 
 ### now that all global variables are defined, roles can be generated from services
@@ -206,9 +209,9 @@ base_playbook_yml = [
 # NOTE I don't use submodules to checkout this external git repo, because submodules are
 #      the most broken, unintuitive trash feature that git includes.
 if gb_yml["vars"]["host_arch"].upper() == "ARM":
-    docker_upstream = "https://github.com/geerlingguy/ansible-role-docker"
-else:
     docker_upstream = "https://github.com/geerlingguy/ansible-role-docker_arm"
+else:
+    docker_upstream = "https://github.com/geerlingguy/ansible-role-docker"
 # TODO get rid of this after script is relatively stable
 if not develop:
     subprocess.run(
@@ -219,9 +222,9 @@ if not develop:
 service2role("setup", "core/setup")
 
 ## nginx reverse proxy
-if not os.path.exists("ansible/roles/nginx/files/nginx/services"):
-    os.makedirs("ansible/roles/nginx/files/nginx/services")
 service2role("nginx", "core/nginx")
+if not os.path.exists("ansible/roles/nginx/files/services"):
+    os.makedirs("ansible/roles/nginx/files/services")
 
 ## firewall (tasks dynamically updated through services before dumping)
 os.makedirs("ansible/roles/firewall/tasks")
@@ -252,7 +255,7 @@ os.makedirs("ansible/roles/finalize/templates")
 dump_yaml(docker_compose_yml, "ansible/roles/finalize/templates/docker-compose.yml.j2")
 service2role("finalize", "core/finalize")
 
-dump_yaml(firewall_tasks_yml, "ansible/roles/firewall/tasks/main.yml")
+dump_yaml(firewall_service_yml["tasks"], "ansible/roles/firewall/tasks/main.yml")
 dump_yaml(base_playbook_yml, "ansible/main.yml")
 dump_yaml(inventory_yml, "ansible/inventory.yml")
 
