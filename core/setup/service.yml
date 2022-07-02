@@ -25,3 +25,15 @@ tasks:
     file:
       path: "{{ gb_root }}/volumes"
       state: directory
+
+  - name: Ensure pip is installed
+    apt:
+      name: python3-pip
+      state: present
+    become: yes
+
+  - name: Ensure tmux is installed
+    apt:
+      name: tmux
+      state: present
+    become: yes
