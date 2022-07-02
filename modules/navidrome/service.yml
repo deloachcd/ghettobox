@@ -8,9 +8,10 @@ firewall:
     scope: lan
 
 tasks:
-  - name: Ensure our user owns the navidrome music library
+  - name: Ensure navidrome music library exists, and gb_user owns it
     file:
       path: "{{ navidrome_music_path }}"
+      state: directory
       owner: "{{ gb_user }}"
 
   - name: Ensure we have a directory for Navidrome data on the host

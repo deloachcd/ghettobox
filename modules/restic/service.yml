@@ -30,3 +30,4 @@ tasks:
       path: "{{ restic_backup_path }}"
       state: directory
       owner: "{{ gb_user }}"
+    become: yes

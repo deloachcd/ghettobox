@@ -88,11 +88,14 @@ def service2role(service_name, service_path):
         "module_utils",
         "lookup_plugins",
     ]:
-        directory_path = os.path.join(service_path, directory)
-        if os.path.exists(directory_path) and not os.path.exists(
-            os.path.join(service_root, directory)
-        ):
-            shutil.copytree(directory_path, os.path.join(service_root, directory))
+        module_path = os.path.join(service_path, directory)
+        ansible_path = os.path.join(service_root, directory)
+        if os.path.exists(module_path) and not os.path.exists(ansible_path):
+            shutil.copytree(module_path, ansible_path)
+        elif os.path.exists(module_path):
+            for fname in os.listdir(module_path):
+                fullpath = os.path.join(module_path, fname)
+                shutil.copy(fullpath, ansible_path)
 
     # Write's nginx config snippet for the proxy to nginx directory
     if "proxy" in service_yml.keys():
