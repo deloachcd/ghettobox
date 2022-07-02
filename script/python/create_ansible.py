@@ -202,7 +202,7 @@ for task in firewall_service_yml["tasks"][0]["block"]:
 base_playbook_yml = [
     {
         "hosts": "gb_host",
-        "roles": [{"role": "docker", "become": "yes"}, "setup", "nginx", "firewall"],
+        "roles": ["setup", {"role": "docker", "become": "yes"}, "nginx", "firewall"],
     }
 ]
 
