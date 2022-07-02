@@ -113,9 +113,8 @@ def service2role(service_name, service_path):
     # Write docker-compose configuration for service to compound docker-compose.yml
     # template
     if "compose" in service_yml.keys():
-        docker_compose_yml["services"][service_name] = service_yml["compose"][
-            service_name
-        ]
+        for name, service in service_yml["compose"].items():
+            docker_compose_yml["services"][name] = service
 
 
 # Recursively delete existing provisioner if exists to have a blank slate
