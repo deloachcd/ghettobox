@@ -1,7 +1,7 @@
 proxy: |
-  location /cal/ {
+  location /caldav/ {
     proxy_pass http://localhost:5232/;
-    proxy_set_header X-Script-Name /radicale;
+    proxy_set_header X-Script-Name /caldav;
     proxy_pass_header Authorization;
   }
 
