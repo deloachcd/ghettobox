@@ -1,4 +1,3 @@
-#+attr_org :width 400
 [[./img/ghettobox.png]]
 
 * ghettobox
