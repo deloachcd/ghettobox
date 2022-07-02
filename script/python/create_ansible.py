@@ -249,7 +249,7 @@ for service in gb_yml["services"]:
 ## finalize
 base_playbook_yml[0]["roles"].append("finalize")
 os.makedirs("ansible/roles/finalize/templates")
-dump_yaml(docker_compose_yml, "ansible/roles/finalize/templates/docker-compose.yml")
+dump_yaml(docker_compose_yml, "ansible/roles/finalize/templates/docker-compose.yml.j2")
 service2role("finalize", "core/finalize")
 
 dump_yaml(firewall_tasks_yml, "ansible/roles/firewall/tasks/main.yml")
