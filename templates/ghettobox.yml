@@ -9,11 +9,9 @@ vars:
   # via SSH public key authentication.
   gb_user: example_username
 
-  # Location for ghettobox services to store data.
-  # A value of "ghettobox" will use default directory ~/ghettobox, while
-  # any other value will use the path specified, and create ~/ghettobox
-  # as a symlink to it.
-  gb_data_location: ghettobox
+  # Location for ghettobox services to store docker volumes and other persistent
+  # data
+  gb_root: ghettobox
 
   # Private IP address range for the server's local area network
   local_subnet: "192.168.0.0/16"
@@ -44,19 +42,19 @@ services:
     enabled: true
     vars:
       # Root path for the user to be able to browse via the filebrowser service
-      filebrowser_root_path: /path/to/fb/root
+      filebrowser_root_path: "{{ gb_root }}/net/drive"
 
   - name: navidrome
     enabled: true
     vars:
       # Path to music files for the navidrome service
-      navidrome_music_path: /path/to/music
+      navidrome_music_path: "{{ gb_root }}/net/music"
 
   - name: samba
     enabled: true
     vars:
       # Path to the samba share on the server
-      samba_share_path: /path/to/share
+      samba_share_path: "{{ gb_root }}/net"
 
       # Username and password for the samba user, written into encrypted
       # smbpasswd file on provisioner creation
@@ -98,4 +96,8 @@ services:
   - name: restic
     enabled: true
     vars:
-      restic_backup_path: "/path/to/backup/sources"
+      # Source directory which restic will backup
+      restic_backup_src: "{{ gb_root }}"
+
+      # Location where restic will store backups
+      restic_backup_path: "/backups/ghettobox"
