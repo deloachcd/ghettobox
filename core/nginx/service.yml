@@ -18,8 +18,8 @@ compose:
   nginx:
     image: nginx
     volumes:
-      - ./nginx/volumes/ssl:/etc/nginx/ssl
-      - ./nginx/volumes/services:/etc/nginx/conf.d/services
-      - ./nginx/volumes/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./volumes/nginx/ssl:/etc/nginx/ssl
+      - ./volumes/nginx/services:/etc/nginx/conf.d/services
+      - ./volumes/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     network_mode: host
     restart: always

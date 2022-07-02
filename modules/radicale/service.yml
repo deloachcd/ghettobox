@@ -12,7 +12,6 @@ firewall:
 compose:
   radicale:
     image: tomsquest/docker-radicale
-    container_name: radicale
     ports:
       - 5232:5232
     init: true

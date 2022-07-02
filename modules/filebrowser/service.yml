@@ -29,16 +29,16 @@ tasks:
 
   - name: Ensure we have a directory for filebrowser volume data on the host
     file:
-      path: "{{ gb_root }}/data/filebrowser"
+      path: "{{ gb_root }}/volumes/filebrowser"
       state: directory
 
   - name: Ensure filebrowser database file exists on the host
     file:
-      path: "{{ gb_root }}/data/filebrowser/database.db"
+      path: "{{ gb_root }}/volumes/filebrowser/database.db"
       state: touch
 
   - name: Copy over filebrowser config
     copy:
       src: filebrowser.json
-      dest: "{{ gb_root }}/data/filebrowser/filebrowser.json"
+      dest: "{{ gb_root }}/volumes/filebrowser/filebrowser.json"
 

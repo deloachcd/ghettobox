@@ -31,7 +31,7 @@ compose:
       - 445:445
     volumes:
       - "{{ samba_share_path }}:/samba"
-      - "volumes/samba/smbpasswd:/etc/samba/private/smbpasswd"
+      - "./volumes/samba/smbpasswd:/etc/samba/private/smbpasswd"
     command: >
       -i '/etc/samba/private/smbpasswd'
       -s '{{ samba_share_config }}'

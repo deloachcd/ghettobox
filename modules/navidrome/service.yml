@@ -16,13 +16,13 @@ tasks:
 
   - name: Ensure we have a directory for Navidrome data on the host
     file:
-      path: "{{ gb_root }}/data/navidrome"
+      path: "{{ gb_root }}/volumes/navidrome"
       state: directory
 
   - name: Copy over Navidrome config
     copy:
       src: navidrome.toml
-      dest: "{{ gb_root }}/data/navidrome/config.toml"
+      dest: "{{ gb_root }}/volumes/navidrome/config.toml"
 
 compose:
   navidrome:
