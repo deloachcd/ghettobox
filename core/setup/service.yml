@@ -13,19 +13,13 @@ tasks:
   - set_fact:
       gb_user_gid: "{{ user_gid.stdout }}"
 
-  - name: Ensure gb_data_location exists and is a directory
+  - name: Ensure gb_root exists and is a directory that gb_user owns
     file:
-      path: "{{ gb_data_location }}"
+      path: "{{ gb_root }}"
       state: directory
+      owner: "{{ gb_user }}"
 
-  - name: Symlink ~/ghettobox to gb_data_location (if paths differ)
+  - name: Ensure we have a directory for docker volume data on the host
     file:
-      src: "{{ gb_data_location }}"
-      path: ghettobox
-      state: link
-    when: not "{{ gb_data_location }}" == "ghettobox"
-
-  - name: Ensure we have a directory for ghettobox service data on the host
-    file:
-      path: ghettobox/data
+      path: "{{ gb_root }}/volumes"
       state: directory

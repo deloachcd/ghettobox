@@ -32,27 +32,27 @@ compose:
       retries: 3
     restart: unless-stopped
     volumes:
-      - ./radicale/data:/data
-      - ./radicale/config/radicale.ini:/etc/radicale/config
-      - ./radicale/config/users:/etc/radicale/users
+      - ./volumes/radicale/data:/data
+      - ./volumes/radicale/config/radicale.ini:/etc/radicale/config
+      - ./volumes/radicale/config/users:/etc/radicale/users
 
 tasks:
   - name: Ensure we have a directory for radicale data
     file:
-      path: ghettobox/radicale/data
+      path: "{{ gb_root }}/volumes/radicale/data"
       state: directory
 
   - name: Ensure we have a directory for radicale config
     file:
-      path: ghettobox/radicale/config
+      path: "{{ gb_root }}/volumes/radicale/config"
       state: directory
 
   - name: Copy over radicale config file to the config directory
     copy:
       src: radicale.ini
-      dest: ghettobox/radicale/config
+      dest: "{{ gb_root }}/volumes/radicale/config"
 
   - name: Copy over encrypted users file to the config directory
     copy:
       src: users
-      dest: ghettobox/radicale/config
+      dest: "{{ gb_root }}/volumes/radicale/config"

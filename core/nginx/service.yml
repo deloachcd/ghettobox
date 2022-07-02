@@ -1,25 +1,25 @@
 tasks:
   - name: Ensure we have a directory for nginx configs and SSL certs
     file:
-      path: ghettobox/nginx/ssl
+      path: "{{ gb_root }}/volumes/nginx/ssl"
       state: directory
 
   - name: Copy over base nginx config
     copy:
       src: base.conf
-      dest: ghettobox/nginx/nginx.conf
+      dest: "{{ gb_root }}/volumes/nginx/nginx.conf"
 
   - name: Copy over proxy config files for the services
     copy:
       src: services
-      path: ghettobox/nginx
+      path: "{{ gb_root }}/volumes/nginx"
 
 compose:
   nginx:
     image: nginx
     volumes:
-      - ./nginx/ssl:/etc/nginx/ssl
-      - ./nginx/services:/etc/nginx/conf.d/services
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/volumes/ssl:/etc/nginx/ssl
+      - ./nginx/volumes/services:/etc/nginx/conf.d/services
+      - ./nginx/volumes/nginx.conf:/etc/nginx/conf.d/default.conf
     network_mode: host
     restart: always

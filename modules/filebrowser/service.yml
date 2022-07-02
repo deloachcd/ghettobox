@@ -13,8 +13,8 @@ compose:
     user: "{{ user_uid.stdout }}:{{ user_gid.stdout }}"
     volumes:
       - "{{ filebrowser_root_path }}:/srv"
-      - "./data/filebrowser/database.db:/database.db"
-      - "./data/filebrowser/filebrowser.json:/.filebrowser.json"
+      - "./volumes/filebrowser/database.db:/database.db"
+      - "./volumes/filebrowser/filebrowser.json:/.filebrowser.json"
     ports:
       - "8080:8080"
     restart: always
@@ -27,18 +27,18 @@ tasks:
       recurse: yes
     become: yes
 
-  - name: Ensure we have a directory for filebrowser data on the host
+  - name: Ensure we have a directory for filebrowser volume data on the host
     file:
-      path: ghettobox/data/filebrowser
+      path: "{{ gb_root }}/data/filebrowser"
       state: directory
 
   - name: Ensure filebrowser database file exists on the host
     file:
-      path: ghettobox/data/filebrowser/database.db
+      path: "{{ gb_root }}/data/filebrowser/database.db"
       state: touch
 
   - name: Copy over filebrowser config
     copy:
       src: filebrowser.json
-      dest: ghettobox/data/filebrowser/filebrowser.json
+      dest: "{{ gb_root }}/data/filebrowser/filebrowser.json"
 

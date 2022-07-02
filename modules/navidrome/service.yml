@@ -15,13 +15,13 @@ tasks:
 
   - name: Ensure we have a directory for Navidrome data on the host
     file:
-      path: ghettobox/data/navidrome
+      path: "{{ gb_root }}/data/navidrome"
       state: directory
 
   - name: Copy over Navidrome config
     copy:
       src: navidrome.toml
-      dest: ghettobox/data/navidrome/config.toml
+      dest: "{{ gb_root }}/data/navidrome/config.toml"
 
 compose:
   navidrome:
@@ -32,7 +32,7 @@ compose:
     environment:
       ND_CONFIGFILE: "/data/config.toml"
     volumes:
-      - "./data/navidrome:/data"
+      - "./volumes/navidrome:/data"
       - "{{ navidrome_music_path }}:/music:ro"
     restart: always
   

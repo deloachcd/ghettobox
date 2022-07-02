@@ -15,13 +15,13 @@ tasks:
 
   - name: Ensure we have a directory for smbpasswd file
     file:
-      path: ghettobox/samba
+      path: "{{ gb_root }}/volumes/samba"
       state: directory
 
   - name: Copy over smbpasswd file containing hashed credentials
     copy:
       src: smbpasswd
-      dest: ghettobox/samba
+      dest: "{{ gb_root }}/volumes/samba"
 
 compose:
   samba:
@@ -31,7 +31,7 @@ compose:
       - 445:445
     volumes:
       - "{{ samba_share_path }}:/samba"
-      - "samba/smbpasswd:/etc/samba/private/smbpasswd"
+      - "volumes/samba/smbpasswd:/etc/samba/private/smbpasswd"
     command: >
       -i '/etc/samba/private/smbpasswd'
       -s '{{ samba_share_config }}'
