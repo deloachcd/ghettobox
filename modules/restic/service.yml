@@ -2,6 +2,7 @@ compose:
   restic-backup:
     image: mazzolino/restic
     environment:
+      RUN_ON_STARTUP: "true"
       BACKUP_CRON: "0 0 3 * * *"
       RESTIC_PASSWORD: ghettobox
       RESTIC_REPOSITORY: /mnt/restic
