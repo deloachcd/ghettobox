@@ -104,3 +104,6 @@ services:
 
       # Location where restic will store backups
       restic_backup_path: "/backups/ghettobox"
+
+  - name: watchtower
+    enabled: true
