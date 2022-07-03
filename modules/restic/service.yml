@@ -11,7 +11,7 @@ compose:
         --tag docker-volumes
         --verbose
       RESTIC_FORGET_ARGS: "--keep-last 10"
-      TZ: America/Denver
+      TZ: "{{ local_timezone }}"
     volumes:
       - "{{ restic_backup_src }}:/data:ro"
       - "{{ restic_backup_path }}:/mnt/restic"
@@ -23,7 +23,7 @@ compose:
       PRUNE_CRON: "0 30 3 * * *"
       RESTIC_REPOSITORY: /mnt/restic
       RESTIC_PASSWORD: ghettobox
-      TZ: America/Denver
+      TZ: "{{ local_timezone }}"
 
 tasks:
   - name: Ensure restic_backup_path exists, and is owned by gb_user

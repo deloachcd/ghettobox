@@ -13,6 +13,9 @@ vars:
   # data
   gb_root: ghettobox
 
+  # Timezone for services like scheduled backups and updates
+  local_timezone: Europe/London
+
   # Private IP address range for the server's local area network
   local_subnet: "192.168.0.0/16"
 
