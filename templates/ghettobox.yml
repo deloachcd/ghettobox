@@ -105,5 +105,18 @@ services:
       # Location where restic will store backups
       restic_backup_path: "/backups/ghettobox"
 
+      # Schedule for restic to create backups, in 6-field cron syntax
+      restic_backup_schedule: "0 0 3 * * *"
+
+      # Schedule for restic to prune old backups
+      restic_prune_schedule: "0 30 3 * * *"
+
+      # Number of old backups to keep
+      restic_keep_last: 10
+
   - name: watchtower
     enabled: true
+    vars:
+      # Schedule for watchtower to check for and apply base image updates,
+      # in 6-field cron syntax
+      watchtower_schedule: "0 0 4 */14 * *"

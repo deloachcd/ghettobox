@@ -4,6 +4,6 @@ compose:
     environment:
       TZ: "{{ local_timezone }}"
     command: >
-      --schedule "0 0 4 */14 * *"
+      --schedule "{{ watchtower_schedule }}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
