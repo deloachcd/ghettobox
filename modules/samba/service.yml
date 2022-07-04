@@ -35,5 +35,7 @@ compose:
     command: >
       -i '/etc/samba/private/smbpasswd'
       -s '{{ samba_share_config }}'
-      -p
+    environment:
+      USER_ID: "{{ user_uid.stdout }}"
+      GROUP_ID: "{{ user_gid.stdout }}"
     restart: unless-stopped
