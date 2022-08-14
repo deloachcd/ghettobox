@@ -13,7 +13,7 @@ import re
 yml_tags = []
 tag_handlers = {}
 
-# flag to skip docker role cloning and confirmation to nuke existing ansible provisioner
+# flag to skip confirmation to nuke existing ansible provisioner
 develop = False
 
 
@@ -202,25 +202,11 @@ for task in firewall_service_yml["tasks"][0]["block"]:
 base_playbook_yml = [
     {
         "hosts": "gb_host",
-        "roles": ["setup", {"role": "docker", "become": "yes"}, "nginx", "firewall"],
+        "roles": ["setup", "nginx", "firewall"],
     }
 ]
 
 ### now that all global variables are defined, roles can be generated from services
-
-## docker
-# NOTE I don't use submodules to checkout this external git repo, because submodules are
-#      the most broken, unintuitive trash feature that git includes.
-if gb_yml["vars"]["host_arch"].upper() == "ARM":
-    docker_upstream = "https://github.com/geerlingguy/ansible-role-docker_arm"
-else:
-    docker_upstream = "https://github.com/geerlingguy/ansible-role-docker"
-# TODO get rid of this after script is relatively stable
-if not develop:
-    subprocess.run(
-        ["git", "clone", f"{docker_upstream}", "ansible/roles/docker"], check=True
-    )
-
 ## setup
 service2role("setup", "core/setup")
 

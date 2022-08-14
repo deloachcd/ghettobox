@@ -1,9 +1,5 @@
 host: example.ghettobox.com
 vars:
-  # Architecture type for the host, either x86 or ARM (case-insensitive)
-  # Raspberry pis are ARM, while most other common home computers are x86.
-  host_arch: arm
-
   # The username to connect to the server and run the deploy logic as.
   # Needs to be able to escalate privileges via sudo, and connect to the pi server
   # via SSH public key authentication.
@@ -86,7 +82,7 @@ services:
       #               [admins] allowed default:'none' or list of admin users
       #               [writelist] list of users that can write to a RO share
       #               [comment] description of share
-      samba_share_config: "share;/samba;yes;no;no;{{ gb_user }}"
+      samba_share_config: "ghettobox;/samba;yes;no;no;{{ gb_user }}"
 
   - name: radicale
     enabled: true
