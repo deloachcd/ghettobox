@@ -2,3 +2,18 @@
 
 * ghettobox
 Provisioning servers from a single file.
+
+** Setup
+*** Pre-requisites
+- Server running a currently supported version of [[https://www.debian.org/][Debian]]
+- [[https://docs.docker.com/engine/install/debian/][Docker Engine]] installed on server, ~docker-compose~ installed for service user
+- ~python3-venv~ or equivalent installed on client PC where repo is cloned
+- A user account on the Debian server with ~sudo~ permissions, able to SSH via keyauth, able to manage docker containers
+*** Steps
+1. Clone this repo and navigate to the root directory
+2. Run ~./script/init.sh~
+3. Set configuration options for the server configuration on the client-side in ~user/ghettobox.yml~
+4. Ensure ~gb_user~ or it's group owns the parent directory of ~gb_root~ specified in ~user/ghettobox.yml~
+5. Now, generate the provisioner with ~./script/generate.sh~
+6. If all goes well, the provisioner can be run with: ~cd ansible && ./provision.sh~
+7. 

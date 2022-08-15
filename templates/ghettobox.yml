@@ -28,26 +28,18 @@ vars:
   # Whether or not to allow SSH connections on port 22 from the internet
   allow_ssh_from_anywhere: true
 
-  # Whether or not to install docker as part of server provisioning
-  install_docker: true
-
-  # Users which should be able to manage docker containers without sudo
-  # (only configured by provisioner if gb_install_docker is true)
-  docker_users:
-    - "{{ gb_user }}"
-
 services:
   - name: filebrowser
     enabled: true
     vars:
       # Root path for the user to be able to browse via the filebrowser service
-      filebrowser_root_path: "{{ gb_root }}/net/drive"
+      filebrowser_root_path: "{{ gb_root }}/share"
 
   - name: navidrome
     enabled: true
     vars:
       # Path to music files for the navidrome service
-      navidrome_music_path: "{{ gb_root }}/net/music"
+      navidrome_music_path: "{{ gb_root }}/share/music"
 
   - name: samba
     enabled: true

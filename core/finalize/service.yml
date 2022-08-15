@@ -5,11 +5,11 @@ tasks:
       dest: "{{ gb_root }}/launcher.sh"
       mode: u+x
 
-  - name: Ensure gb_user owns everything placed in gb_root
+  - name: Ensure gb_user recursively owns everything placed in gb_root
     file:
       path: "{{ gb_root }}"
-      state: directory
       owner: "{{ gb_user }}"
+      group: "{{ gb_user }}"
       recurse: yes
     become: yes
 
