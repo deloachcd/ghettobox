@@ -1,4 +1,4 @@
-host: example.ghettobox.com
+host: ghettobox.example.com
 vars:
   # The username to connect to the server and run the deploy logic as.
   # Needs to be able to escalate privileges via sudo, and connect to the pi server
@@ -7,7 +7,15 @@ vars:
 
   # Location for ghettobox services to store docker volumes and other persistent
   # data
-  gb_root: ghettobox
+  gb_root: ~/ghettobox
+
+  # Configure nginx reverse proxy to host on 443, with SSL certs
+  gb_enable_ssl: true
+
+  # Path to full cert chain and key on the server
+  ssl_cert_chain_file: ~/.acme.sh/ghettobox.example.com/fullchain.cer
+  ssl_cert_key_file: ~/.acme.sh/ghettobox.example.com/ghettobox.example.com.key
+
 
   # Timezone for services like scheduled backups and updates
   local_timezone: Europe/London

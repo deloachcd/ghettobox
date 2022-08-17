@@ -4,10 +4,35 @@ tasks:
       path: "{{ gb_root }}/volumes/nginx/ssl"
       state: directory
 
-  - name: Copy over base nginx config
+  - name: Copy over base nginx config (non-SSL)
+    when: not gb_enable_ssl
     copy:
       src: base.conf
       dest: "{{ gb_root }}/volumes/nginx/nginx.conf"
+
+  - name: Set up base nginx config (SSL)
+    when: gb_enable_ssl
+    block:
+      - name: Copy over base nginx config (SSL)
+        copy:
+          src: base.ssl.conf
+          dest: "{{ gb_root }}/volumes/nginx/nginx.conf"
+
+      - name: Create symlink for cert chain file
+        file:
+          src: "{{ ssl_cert_chain_file }}"
+          dest: "{{ gb_root }}/volumes/nginx/ssl/fullchain.cer"
+          state: link
+
+      - name: Create symlink for cert key file
+        file:
+          src: "{{ ssl_cert_key_file }}"
+          dest: "{{ gb_root }}/volumes/nginx/ssl/fullchain.key"
+          state: link
+        
+        copy:
+          src: base.ssl.conf
+          dest: "{{ gb_root }}/volumes/nginx/nginx.conf"
 
   - name: Copy over proxy config files for the services
     copy:
