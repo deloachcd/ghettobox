@@ -1,7 +1,6 @@
 [[./img/ghettobox.png]]
 
 * ghettobox
-Provisioning servers from a single file.
 ** What is this?
 This is my personal solution for automating a large portion of the
 provisioning work involved in setting up a home/office server hosting multiple
