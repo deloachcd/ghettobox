@@ -19,9 +19,10 @@ work involved in:
 
 You just pick the services you want, set configuration options like where you
 want them to store their persistent data, and this software generates an
-Ansible provisioner to do all this monotenous prep work automatically.
-For simple setups, you might be able to just SSH in and run ~docker-compose up~
-to bring up all your services.
+Ansible provisioner to do all this monotonous prep work automatically.
+
+After it does its thing, you should be able to just SSH in and bring your services
+up with ~docker-compose up~.
 ** Setup
 *** Pre-requisites
 - Server running a currently supported version of [[https://www.debian.org/][Debian]]
@@ -34,4 +35,5 @@ to bring up all your services.
 3. Set configuration options for the server configuration on the client-side in ~user/ghettobox.yml~
 4. Now, generate the provisioner with ~./script/generate.sh~
 5. If all goes well, the provisioner can be run with: ~cd ansible && ./provision.sh~
-6. 
+6. If everything in the provisioner, SSH into the host and ~cd~ to the directory specified as ~gb_root~ in ~user/ghettobox.yml~
+7. Services should be able to be brought up with ~docker-compose up~
