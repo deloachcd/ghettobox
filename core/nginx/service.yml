@@ -27,7 +27,7 @@ tasks:
       - name: Create symlink for cert key file
         file:
           src: "{{ ssl_cert_key_file }}"
-          dest: "{{ gb_root }}/volumes/nginx/ssl/fullchain.key"
+          dest: "{{ gb_root }}/volumes/nginx/ssl/proxy.key"
           state: link
         
         copy:

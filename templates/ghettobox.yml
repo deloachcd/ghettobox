@@ -13,6 +13,9 @@ vars:
   gb_enable_ssl: true
 
   # Path to full cert chain and key on the server
+  #
+  # NOTE acme.sh is highly recommended for simple and easy automatic letsencrypt
+  # cert renewals
   ssl_cert_chain_file: ~/.acme.sh/ghettobox.example.com/fullchain.cer
   ssl_cert_key_file: ~/.acme.sh/ghettobox.example.com/ghettobox.example.com.key
 
