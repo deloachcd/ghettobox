@@ -13,7 +13,6 @@ Provisioning servers from a single file.
 1. Clone this repo and navigate to the root directory
 2. Run ~./script/init.sh~
 3. Set configuration options for the server configuration on the client-side in ~user/ghettobox.yml~
-4. Ensure ~gb_user~ or it's group owns the parent directory of ~gb_root~ specified in ~user/ghettobox.yml~
-5. Now, generate the provisioner with ~./script/generate.sh~
-6. If all goes well, the provisioner can be run with: ~cd ansible && ./provision.sh~
-7. 
+4. Now, generate the provisioner with ~./script/generate.sh~
+5. If all goes well, the provisioner can be run with: ~cd ansible && ./provision.sh~
+6. 
