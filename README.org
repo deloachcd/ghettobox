@@ -2,7 +2,26 @@
 
 * ghettobox
 Provisioning servers from a single file.
+** What is this?
+This is my personal solution for automating a large portion of the
+provisioning work involved in setting up a home/office server hosting multiple
+containerized services behind a reverse proxy. It aims for a balance of
+implementation simplicity and providing useful abstractions, and
+makes no attempt to comprehensively automate the provisioning process.
 
+Instead of comprehensively automating, this software aims to cut down the
+work involved in:
+- locking down the firewall
+- writing an nginx config
+- writing a docker-compose file
+- writing Ansible (or manually creating/modifying files and directories over SSH)
+- writing fail2ban filters and jails
+
+You just pick the services you want, set configuration options like where you
+want them to store their persistent data, and this software generates an
+Ansible provisioner to do all this monotenous prep work automatically.
+For simple setups, you might be able to just SSH in and run ~docker-compose up~
+to bring up all your services.
 ** Setup
 *** Pre-requisites
 - Server running a currently supported version of [[https://www.debian.org/][Debian]]
