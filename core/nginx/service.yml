@@ -1,7 +1,7 @@
 tasks:
-  - name: Ensure we have a directory for nginx configs and SSL certs
+  - name: Ensure we have a directory for nginx configs
     file:
-      path: "{{ gb_root }}/volumes/nginx/ssl"
+      path: "{{ gb_root }}/volumes/nginx"
       state: directory
 
   - name: Copy over base nginx config (non-SSL)
@@ -10,29 +10,11 @@ tasks:
       src: base.conf
       dest: "{{ gb_root }}/volumes/nginx/nginx.conf"
 
-  - name: Set up base nginx config (SSL)
+  - name: Write base nginx config from template (SSL)
     when: gb_enable_ssl
-    block:
-      - name: Copy over base nginx config (SSL)
-        copy:
-          src: base.ssl.conf
-          dest: "{{ gb_root }}/volumes/nginx/nginx.conf"
-
-      - name: Create symlink for cert chain file
-        file:
-          src: "{{ ssl_cert_chain_file }}"
-          dest: "{{ gb_root }}/volumes/nginx/ssl/fullchain.cer"
-          state: link
-
-      - name: Create symlink for cert key file
-        file:
-          src: "{{ ssl_cert_key_file }}"
-          dest: "{{ gb_root }}/volumes/nginx/ssl/proxy.key"
-          state: link
-        
-        copy:
-          src: base.ssl.conf
-          dest: "{{ gb_root }}/volumes/nginx/nginx.conf"
+    template:
+      src: base.ssl.conf.j2
+      dest: "{{ gb_root }}/volumes/nginx/nginx.conf"
 
   - name: Copy over proxy config files for the services
     copy:
@@ -43,7 +25,7 @@ compose:
   nginx:
     image: nginx
     volumes:
-      - ./volumes/nginx/ssl:/etc/nginx/ssl
+      - "{{ ssl_cert_dir }}:/etc/nginx/ssl:ro"
       - ./volumes/nginx/services:/etc/nginx/conf.d/services
       - ./volumes/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     network_mode: host

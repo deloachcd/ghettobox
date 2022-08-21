@@ -179,6 +179,7 @@ inventory_yml = {
         "hosts": {gb_yml["host"]: ""},
         "vars": {
             "ansible_ssh_user": gb_yml["vars"]["gb_user"],
+            "gb_host": gb_yml["host"],
             **gb_yml["vars"],
         },
     }
