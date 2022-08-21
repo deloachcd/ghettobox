@@ -32,10 +32,7 @@ compose:
     volumes:
       - "{{ samba_share_path }}:/samba"
       - "./volumes/samba/smbpasswd:/etc/samba/private/smbpasswd"
-    command: >
-      -i '/etc/samba/private/smbpasswd'
-      -s '{{ samba_share_config }}'
     environment:
-      USER_ID: "{{ user_uid.stdout }}"
-      GROUP_ID: "{{ user_gid.stdout }}"
+      IMPORT: '/etc/samba/private/smbpasswd'
+      SHARE: '{{ samba_share_config }}'
     restart: unless-stopped
