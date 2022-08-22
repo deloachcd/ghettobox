@@ -42,3 +42,22 @@ tasks:
       src: filebrowser.json
       dest: "{{ gb_root }}/volumes/filebrowser/filebrowser.json"
 
+fail2ban:
+  filter: |
+    [INCLUDES]
+    before = common.conf
+
+    [Definition]
+    datepattern = ^%%Y/%%m/%%d %%H:%%M:%%S\s
+    
+    # Sample message:
+    # 2022/08/02 11:28:04 /api/login: 403 8.8.8.8 <nil>
+    
+    failregex = /(.*?): 403 <HOST>\s
+
+  jail: |
+    [filebrowser-failed-auth]
+    enabled = true
+    action = route
+    filter = filebrowser
+    

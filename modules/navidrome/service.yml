@@ -36,4 +36,21 @@ compose:
       - "./volumes/navidrome:/data"
       - "{{ navidrome_music_path }}:/music:ro"
     restart: always
-  
+
+fail2ban:
+  filter: |
+    [INCLUDES]
+    before = common.conf
+
+    [Definition]
+
+    # Sample message: time="2022-08-22T03:48:07Z" level=warning msg="Unsuccessful login"
+    # ...X-Real-Ip:[192.168.1.134]]"...requestId=53b6a5547568/P
+
+    failregex = msg="Unsuccessful login".*X-Real-Ip:\[<HOST>\]
+
+  jail: |
+    [filebrowser-failed-auth]
+    enabled = true
+    action = route
+    filter = navidrome

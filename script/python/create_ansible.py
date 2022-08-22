@@ -104,6 +104,18 @@ def service2role(service_name, service_path):
             f"ansible/roles/nginx/files/services/{service_name}.conf",
         )
 
+    if "fail2ban" in service_yml.keys():
+        if "filter" in service_yml["fail2ban"].keys:
+            write_yaml(
+                service_yml["fail2ban"]["filter"],
+                f"ansible/roles/fail2ban/files/filters.d/{service_name}.conf",
+            )
+        if "jail" in service_yml["fail2ban"].keys:
+            write_yaml(
+                service_yml["fail2ban"]["jail"],
+                f"ansible/roles/fail2ban/files/jail.d/{service_name}.conf",
+            )
+
     # Dynamically construct list of ports to open firewall to, through
     # global pointer variables
     if "firewall" in service_yml.keys():
@@ -215,6 +227,13 @@ service2role("setup", "core/setup")
 service2role("nginx", "core/nginx")
 if not os.path.exists("ansible/roles/nginx/files/services"):
     os.makedirs("ansible/roles/nginx/files/services")
+
+## fail2ban
+service2role("fail2ban", "core/fail2ban")
+if not os.path.exists("ansible/roles/fail2ban/files/filters.d"):
+    os.makedirs("ansible/roles/fail2ban/files/filters.d")
+if not os.path.exists("ansible/roles/fail2ban/files/jail.d"):
+    os.makedirs("ansible/roles/fail2ban/files/jail.d")
 
 ## firewall (tasks dynamically updated through services before dumping)
 os.makedirs("ansible/roles/firewall/tasks")
