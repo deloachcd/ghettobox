@@ -17,6 +17,8 @@ compose:
       - "./volumes/filebrowser/filebrowser.json:/.filebrowser.json"
     ports:
       - "8080:8080"
+    logging:
+      driver: "journald"
     restart: always
 
 tasks:
@@ -58,6 +60,5 @@ fail2ban:
   jail: |
     [filebrowser-failed-auth]
     enabled = true
-    action = route
     filter = filebrowser
     

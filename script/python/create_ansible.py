@@ -105,12 +105,12 @@ def service2role(service_name, service_path):
         )
 
     if "fail2ban" in service_yml.keys():
-        if "filter" in service_yml["fail2ban"].keys:
+        if "filter" in service_yml["fail2ban"].keys():
             write_yaml(
                 service_yml["fail2ban"]["filter"],
-                f"ansible/roles/fail2ban/files/filters.d/{service_name}.conf",
+                f"ansible/roles/fail2ban/files/filter.d/{service_name}.conf",
             )
-        if "jail" in service_yml["fail2ban"].keys:
+        if "jail" in service_yml["fail2ban"].keys():
             write_yaml(
                 service_yml["fail2ban"]["jail"],
                 f"ansible/roles/fail2ban/files/jail.d/{service_name}.conf",
@@ -215,7 +215,7 @@ for task in firewall_service_yml["tasks"][0]["block"]:
 base_playbook_yml = [
     {
         "hosts": "gb_host",
-        "roles": ["setup", "nginx", "firewall"],
+        "roles": ["setup", "nginx", "firewall", "fail2ban"],
     }
 ]
 
@@ -230,8 +230,8 @@ if not os.path.exists("ansible/roles/nginx/files/services"):
 
 ## fail2ban
 service2role("fail2ban", "core/fail2ban")
-if not os.path.exists("ansible/roles/fail2ban/files/filters.d"):
-    os.makedirs("ansible/roles/fail2ban/files/filters.d")
+if not os.path.exists("ansible/roles/fail2ban/files/filter.d"):
+    os.makedirs("ansible/roles/fail2ban/files/filter.d")
 if not os.path.exists("ansible/roles/fail2ban/files/jail.d"):
     os.makedirs("ansible/roles/fail2ban/files/jail.d")
 

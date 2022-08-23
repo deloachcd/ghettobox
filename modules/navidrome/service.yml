@@ -35,6 +35,8 @@ compose:
     volumes:
       - "./volumes/navidrome:/data"
       - "{{ navidrome_music_path }}:/music:ro"
+    logging:
+      driver: "journald"
     restart: always
 
 fail2ban:
@@ -50,7 +52,6 @@ fail2ban:
     failregex = msg="Unsuccessful login".*X-Real-Ip:\[<HOST>\]
 
   jail: |
-    [filebrowser-failed-auth]
+    [navidrome-failed-auth]
     enabled = true
-    action = route
     filter = navidrome
