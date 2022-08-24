@@ -4,7 +4,7 @@
 ** What is this?
 This is my personal solution for automating a large portion of the provisioning work
 involved in setting up a personal server to act as an internet-connected jukebox/private
-Spotify and Google Drive replacement. It automates where its "simple" to, but does
+Spotify and Google Drive replacement. It automates where it makes sense to, but does
 not automate things like installing Docker for its containerized services or setting up
 automatic SSL certificate renewal for common DNS providers.
 
