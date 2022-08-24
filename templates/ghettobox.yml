@@ -13,7 +13,7 @@ vars:
   gb_enable_ssl: true
 
   # The domain which reverse proxied services will be hosted on
-  ssl_hosting_domain: "cloud.ghettobox.xyz"
+  ssl_hosting_domain: "ghettobox.example.com"
 
   # Path to full cert chain and key on the server, with containing directory
   # NOTE acme.sh is highly recommended for simple automated letsencrypt renewals
@@ -21,7 +21,7 @@ vars:
 
   # Names of the relevant certificate files within the ssl_cert_dir
   ssl_cert_chain_file: "fullchain.cer"
-  ssl_cert_key_file: "cloud.ghettobox.xyz.key"
+  ssl_cert_key_file: "ghettobox.example.com.key"
 
   # Timezone for services like scheduled backups and updates
   local_timezone: Europe/London
