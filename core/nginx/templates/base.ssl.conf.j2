@@ -33,5 +33,9 @@ server {
   proxy_set_header X-Forwarded-Host $http_host;
   proxy_buffering off;
 
+  location / {
+    root /www/static;
+  }
+
   include /etc/nginx/conf.d/services/*.conf;
 }

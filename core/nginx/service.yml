@@ -1,8 +1,18 @@
 tasks:
-  - name: Ensure we have a directory for nginx configs
+  - name: Ensure we have a directory for nginx configs & static data
     file:
-      path: "{{ gb_root }}/volumes/nginx"
+      path: "{{ gb_root }}/volumes/nginx/static"
       state: directory
+
+  - name: Copy over basic landing page
+    copy:
+      src: lander.html
+      dest: "{{ gb_root }}/volumes/nginx/static/index.html"
+
+  - name: Copy over static files for landing page
+    copy:
+      src: gorilla_tile.png
+      dest: "{{ gb_root }}/volumes/nginx/static/gorilla_tile.png"
 
   - name: Copy over base nginx config (non-SSL)
     when: not gb_enable_ssl
@@ -27,6 +37,7 @@ compose:
     volumes:
       - "{{ ssl_cert_dir }}:/etc/nginx/ssl:ro"
       - ./volumes/nginx/services:/etc/nginx/conf.d/services
+      - ./volumes/nginx/static:/www/static
       - ./volumes/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     network_mode: host
     restart: always
