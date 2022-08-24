@@ -2,11 +2,11 @@
 
 * ghettobox
 ** What is this?
-This is my personal solution for automating a large portion of the
-provisioning work involved in setting up a home/office server hosting multiple
-containerized services behind a reverse proxy. It aims for a balance of
-implementation simplicity and providing useful abstractions, and
-makes no attempt to comprehensively automate the provisioning process.
+This is my personal solution for automating a large portion of the provisioning work
+involved in setting up a personal server to act as an internet-connected jukebox/private
+Spotify and Google Drive replacement. It automates where its "simple" to, but does
+not automate things like installing Docker for its containerized services or setting up
+automatic SSL certificate renewal for common DNS providers.
 
 Instead of comprehensively automating, this software aims to cut down the
 work involved in:
@@ -16,18 +16,18 @@ work involved in:
 - writing Ansible (or manually creating/modifying files and directories over SSH)
 - writing fail2ban filters and jails
 
-You just pick the services you want, set configuration options like where you
-want them to store their persistent data, and this software generates an
-Ansible provisioner to do all this monotonous prep work automatically.
-
-After it does its thing, you should be able to just SSH in and bring your services
-up with ~docker-compose up~.
+Instead, service provisioning is configured primarily through a single file, ~ghettobox.yml~,
+which is used to generate Ansible code to do the bulk of the provisioning. Its up to the user
+to SSH in, make any desired adjustments (if necessary) and bring the services up once it's
+done its thing.
 ** Setup
 *** Pre-requisites
 - Server running a currently supported version of [[https://www.debian.org/][Debian]]
 - [[https://docs.docker.com/engine/install/debian/][Docker Engine]] installed on server, ~docker-compose~ installed for service user
 - ~python3-venv~ or equivalent installed on client PC where repo is cloned
 - A user account on the Debian server with ~sudo~ permissions, able to SSH via keyauth, able to manage docker containers
+- [[https://certbot.eff.org/][Certbot]] or [[https://github.com/acmesh-official/acme.sh][acme.sh]] (recommended) set up and automatically retrieving fresh SSL certs through a cron job
+  
 *** Steps
 1. Clone this repo and navigate to the root directory
 2. Run ~./script/init.sh~
@@ -35,4 +35,4 @@ up with ~docker-compose up~.
 4. Now, generate the provisioner with ~./script/generate.sh~
 5. If all goes well, the provisioner can be run with: ~cd ansible && ./provision.sh~
 6. If everything in the provisioner, SSH into the host and ~cd~ to the directory specified as ~gb_root~ in ~user/ghettobox.yml~
-7. Services should be able to be brought up with ~docker-compose up~
+7. Services should be able to be brought up in a ~tmux~ session with the included script, ~launcher.sh~
