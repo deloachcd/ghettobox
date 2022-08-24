@@ -4,22 +4,25 @@
 ** What is this?
 This is my personal solution for automating a large portion of the provisioning work
 involved in setting up a personal server to act as an internet-connected jukebox/private
-Spotify and Google Drive replacement. It automates where it makes sense to, but does
-not automate things like installing Docker for its containerized services or setting up
-automatic SSL certificate renewal for common DNS providers.
+Spotify and Google Drive replacement, through containerized [[https://github.com/filebrowser/filebrowser][filebrowser]] and [[https://github.com/navidrome/navidrome][navidrome]]
+services. It automates where it makes sense to, but does not automate things like installing
+Docker for its containerized services or setting up automatic SSL certificate renewal for
+common DNS providers.
 
 Instead of comprehensively automating, this software aims to cut down the
 work involved in:
 - locking down the firewall
-- writing an nginx config
+- writing an nginx config to act as a reverse proxy for the services
 - writing a docker-compose file
 - writing Ansible (or manually creating/modifying files and directories over SSH)
 - writing fail2ban filters and jails
+- setting up scheduled backups for configs and user data
 
 Instead, service provisioning is configured primarily through a single file, ~ghettobox.yml~,
 which is used to generate Ansible code to do the bulk of the provisioning. Its up to the user
 to SSH in, make any desired adjustments (if necessary) and bring the services up once it's
 done its thing.
+
 ** Setup
 *** Pre-requisites
 - Server running a currently supported version of [[https://www.debian.org/][Debian]]
