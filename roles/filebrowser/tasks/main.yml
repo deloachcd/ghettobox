@@ -1,17 +1,20 @@
 - name: Ensure our user owns the filebrowser root
   file:
     path: '{{ filebrowser_root_path }}'
-    owner: '{{ gb_user }}'
+    owner: '{{ ansible_ssh_user }}'
     recurse: true
   become: true
+
 - name: Ensure we have a directory for filebrowser volume data on the host
   file:
     path: '{{ gb_root }}/volumes/filebrowser'
     state: directory
+
 - name: Ensure filebrowser database file exists on the host
   file:
     path: '{{ gb_root }}/volumes/filebrowser/database.db'
     state: touch
+
 - name: Copy over filebrowser config
   copy:
     src: filebrowser.json

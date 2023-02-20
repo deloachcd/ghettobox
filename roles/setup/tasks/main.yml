@@ -1,28 +1,35 @@
 - name: Get UID of our user
   command: id -u
   register: user_uid
+
 - name: Get GID of our user
   command: id -u
   register: user_gid
+
 - set_fact:
     gb_user_uid: '{{ user_uid.stdout }}'
+
 - set_fact:
     gb_user_gid: '{{ user_gid.stdout }}'
+
 - name: Ensure gb_root exists and is a directory that gb_user owns
   file:
     path: '{{ gb_root }}'
     state: directory
     owner: '{{ gb_user }}'
   become: true
+
 - name: Ensure we have a directory for docker volume data on the host
   file:
     path: '{{ gb_root }}/volumes'
     state: directory
+
 - name: Ensure pip is installed
   apt:
     name: python3-pip
     state: present
   become: true
+
 - name: Ensure tmux is installed
   apt:
     name: tmux

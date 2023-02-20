@@ -1,13 +1,15 @@
 - name: Ensure our user owns the samba share
   file:
     path: '{{ samba_share_path }}'
-    owner: '{{ gb_user }}'
+    owner: '{{ ansible_ssh_user }}'
     recurse: true
   become: true
+
 - name: Ensure we have a directory for smbpasswd file
   file:
     path: '{{ gb_root }}/volumes/samba'
     state: directory
+
 - name: Copy over smbpasswd file containing hashed credentials
   copy:
     src: smbpasswd
