@@ -1,0 +1,96 @@
+gb_host:
+  hosts:
+    # The hostname or IP address of the docker host, which will be
+    # provisioned to host the containerized services within the home
+    # directory of the username specified as 'ansible_ssh_user' in
+    # this inventory file.
+    ghettobox.example.com:
+  vars:
+    # The username to connect to the server and run the deploy logic
+    # as. Needs to be able to escalate privileges via sudo, and
+    # connect to the server via SSH public/private key authentication.
+    # 
+    # This user will act as the admin for 
+    ansible_ssh_user: example_username
+
+    # TODO get rid of all instances of this variable
+    gb_user: example_username
+
+    # Location for ghettobox services to store docker volumes and other
+    # persistent data
+    gb_root: ~/ghettobox
+
+    # Timezone for services like scheduled backups and updates
+    local_timezone: Europe/London
+
+    # Private IP address range for the docker host's local area
+    # network, used to restrict access to port 22 once the firewall is
+    # locked down.
+    local_subnet: 192.168.0.0/16
+
+    # Controls whether or not the provisioner will configure UFW to
+    # deny connections on all ports on the docker host initially
+    # (ansible roles for specific containerized services can allow
+    # necessary ports).
+    # 
+    # There are two exceptions:
+    # - access to port 22 is allowed for LAN (range specified above)
+    # - access to port 443 is allowed from anywhere (if specified below)
+    lockdown_firewall: true
+
+    # Allow HTTPS connections from the public internet. This must be set
+    # to "true" if anything is going to accessible from there!
+    allow_https_from_anywhere: true
+
+    # Path the user will be able to browse via filebrowser
+    filebrowser_root_path: ~/ghettobox/share
+
+    # Path where music files to be hosted by navidrome will be stored
+    navidrome_music_path: ~/ghettobox/share/music
+
+    # Path the user will be able to mount as a samba share
+    samba_share_path: ~/ghettobox/share
+
+    # Configuration options for the samba share.  Volume mount point
+    # for {{ share_path }} will be '/samba' inside the container unless
+    # you modify the docker-compose file, so you probably don't want to
+    # change that unless you know what you're doing.
+    #
+    # NOTE: username specified in place of 'example_username' should
+    # almost certainly match the username specified in the smbpasswd
+    # file generated for use by the container.
+    #
+    # Usage information from the 'help' text from samba.sh:
+    # "<name;/path>[;browse;readonly;guest;users;admins;writelist;comment]"
+    # Configure a share
+    # required arg: "<name>;</path>"
+    #   <name> is how it's called for clients
+    #   <path> path to share
+    #   NOTE: for the default values, just leave blank
+    #   [browsable] default:'yes' or 'no'
+    #   [readonly] default:'yes' or 'no'
+    #   [guest] allowed default:'yes' or 'no'
+    #   NOTE: for user lists below, usernames are separated by ','
+    #   [users] allowed default:'all' or list of allowed users
+    #   [admins] allowed default:'none' or list of admin users
+    #   [writelist] list of users that can write to a RO share
+    #   [comment] description of share
+    samba_share_config: ghettobox;/samba;yes;no;no;example_username
+
+    # Source directory which restic will backup
+    restic_backup_src: ~/ghettobox
+    # Location where restic will store backups
+    restic_backup_path: /backups/ghettobox
+
+    # Schedule for restic to create backups, in 6-field cron syntax
+    restic_backup_schedule: 0 0 3 * * *
+
+    # Schedule for restic to prune old backups
+    restic_prune_schedule: 0 30 3 * * *
+
+    # Number of old backups to keep
+    restic_keep_last: 10
+
+    # Schedule for watchtower to check for and apply base image
+    # updates, in 6-field cron syntax
+    watchtower_schedule: 0 0 4 */14 * *
