@@ -1,0 +1,21 @@
+- name: Provisioning for fail2ban
+  become: true
+  block:
+  - name: Ensure fail2ban is installed
+    apt:
+      name: fail2ban
+      state: present
+  - name: Copy over jail.local
+    copy:
+      src: jail.local
+      dest: /etc/fail2ban/jail.local
+  - name: Copy over filters for enabled services
+    copy:
+      src: filter.d/
+      dest: /etc/fail2ban/filter.d/
+  - name: Copy over jails for enabled services
+    copy:
+      src: jail.d/
+      dest: /etc/fail2ban/jail.d/
+  - name: Reload fail2ban
+    command: fail2ban-client reload

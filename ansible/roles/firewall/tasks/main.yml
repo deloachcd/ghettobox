@@ -1,0 +1,48 @@
+- name: Lock down the server's firewall with UFW
+  when: lockdown_firewall
+  become: true
+  block:
+  - name: Ensure we have UFW installed for firewall
+    apt:
+      name: ufw
+      state: present
+  - name: Disable UFW and set default policy to deny
+    community.general.ufw:
+      state: disabled
+      default: deny
+  - name: Allow HTTP/HTTPS connections from LAN
+    community.general.ufw:
+      rule: allow
+      port: '{{ item }}'
+      from: '{{ local_subnet }}'
+    loop:
+    - 80
+    - 443
+  - name: Allow HTTPS connections from anywhere
+    community.general.ufw:
+      rule: allow
+      port: 443
+    when: allow_https_from_anywhere
+  - name: Allow SSH connections from anywhere
+    community.general.ufw:
+      rule: allow
+      port: 22
+    when: allow_ssh_from_anywhere
+  - name: Allow connections to service-enabled ports from LAN
+    community.general.ufw:
+      rule: allow
+      port: '{{ item }}'
+      from: '{{ local_subnet }}'
+    loop:
+    - 8080
+    - 4533
+    - 139
+    - 445
+  - name: Allow connections to service-enabled ports from anywhere
+    community.general.ufw:
+      rule: allow
+      port: '{{ item }}'
+    loop: []
+  - name: Enable UFW
+    community.general.ufw:
+      state: enabled

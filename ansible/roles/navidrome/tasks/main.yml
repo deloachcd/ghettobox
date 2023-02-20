@@ -1,0 +1,13 @@
+- name: Ensure navidrome music library exists, and gb_user owns it
+  file:
+    path: '{{ navidrome_music_path }}'
+    state: directory
+    owner: '{{ gb_user }}'
+- name: Ensure we have a directory for Navidrome data on the host
+  file:
+    path: '{{ gb_root }}/volumes/navidrome'
+    state: directory
+- name: Copy over Navidrome config
+  copy:
+    src: navidrome.toml
+    dest: '{{ gb_root }}/volumes/navidrome/config.toml'

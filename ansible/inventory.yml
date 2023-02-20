@@ -1,0 +1,28 @@
+gb_host:
+  hosts:
+    ghettobox.example.com: ''
+  vars:
+    ansible_ssh_user: example_username
+    gb_host: ghettobox.example.com
+    gb_user: example_username
+    gb_root: ~/ghettobox
+    gb_enable_ssl: true
+    ssl_hosting_domain: ghettobox.example.com
+    ssl_cert_dir: ~/.acme.sh/ghettobox.example.com
+    ssl_cert_chain_file: fullchain.cer
+    ssl_cert_key_file: ghettobox.example.com.key
+    local_timezone: Europe/London
+    local_subnet: 192.168.0.0/16
+    lockdown_firewall: true
+    allow_https_from_anywhere: true
+    allow_ssh_from_anywhere: true
+    filebrowser_root_path: ~/ghettobox/share
+    navidrome_music_path: ~/ghettobox/share/music
+    samba_share_path: ~/ghettobox/share
+    samba_share_config: ghettobox;/samba;yes;no;no;example_username
+    restic_backup_src: ~/ghettobox
+    restic_backup_path: /backups/ghettobox
+    restic_backup_schedule: 0 0 3 * * *
+    restic_prune_schedule: 0 30 3 * * *
+    restic_keep_last: 10
+    watchtower_schedule: 0 0 4 */14 * *

@@ -1,0 +1,16 @@
+- name: Copy over launcher script
+  copy:
+    src: launcher.sh
+    dest: '{{ gb_root }}/launcher.sh'
+    mode: u+x
+- name: Ensure gb_user recursively owns everything placed in gb_root
+  file:
+    path: '{{ gb_root }}'
+    owner: '{{ gb_user }}'
+    group: '{{ gb_user }}'
+    recurse: true
+  become: true
+- name: Create populated docker-compose.yml file for service initialization
+  template:
+    src: templates/docker-compose.yml.j2
+    dest: '{{ gb_root }}/docker-compose.yml'

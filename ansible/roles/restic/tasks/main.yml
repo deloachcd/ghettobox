@@ -1,0 +1,6 @@
+- name: Ensure restic_backup_path exists, and is owned by gb_user
+  file:
+    path: '{{ restic_backup_path }}'
+    state: directory
+    owner: '{{ gb_user }}'
+  become: true

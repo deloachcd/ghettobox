@@ -1,0 +1,12 @@
+- hosts: gb_host
+  roles:
+  - setup
+  - nginx
+  - firewall
+  - fail2ban
+  - filebrowser
+  - navidrome
+  - samba
+  - restic
+  - watchtower
+  - finalize
