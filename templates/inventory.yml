@@ -79,6 +79,7 @@ gb_host:
 
     # Source directory which restic will backup
     restic_backup_src: ~/ghettobox
+
     # Location where restic will store backups
     restic_backup_path: /backups/ghettobox
 
