@@ -1,0 +1,23 @@
+# define matcher for all IPs not associated
+# with private address ranges like 192.168.0.0/16
+@public_ips not remote_ip private_ranges
+
+music.ghettobox.xyz {
+	# containerized navidrome service
+	reverse_proxy localhost:4533
+	tls {
+		dns cloudflare {{ cloudflare_api_token }}
+	}
+}
+
+drive.ghettobox.xyz {
+	# containerized filebrowser service
+	abort @public_ips
+	reverse_proxy localhost:8080
+}
+
+manage.ghettobox.xyz {
+	# containerized portainer service
+	abort @public_ips
+	reverse_proxy localhost:9443
+}
