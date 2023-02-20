@@ -1,14 +1,6 @@
 version: '3'
+name: gb
 services:
-  nginx:
-    image: nginx
-    volumes:
-    - '{{ ssl_cert_dir }}:/etc/nginx/ssl:ro'
-    - ./volumes/nginx/services:/etc/nginx/conf.d/services
-    - ./volumes/nginx/static:/www/static
-    - ./volumes/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-    network_mode: host
-    restart: always
   filebrowser:
     image: filebrowser/filebrowser:latest
     user: '{{ user_uid.stdout }}:{{ user_gid.stdout }}'
@@ -21,6 +13,7 @@ services:
     logging:
       driver: journald
     restart: always
+
   navidrome:
     image: deluan/navidrome:latest
     user: '{{ gb_user_uid }}:{{ gb_user_gid }}'
@@ -34,6 +27,7 @@ services:
     logging:
       driver: journald
     restart: always
+
   samba:
     image: dperson/samba
     ports:
@@ -46,6 +40,7 @@ services:
       IMPORT: /etc/samba/private/smbpasswd
       SHARE: '{{ samba_share_config }}'
     restart: unless-stopped
+
   restic-backup:
     image: mazzolino/restic
     environment:
@@ -60,6 +55,7 @@ services:
     volumes:
     - '{{ restic_backup_src }}:/data:ro'
     - '{{ restic_backup_path }}:/mnt/restic'
+
   restic-prune:
     image: mazzolino/restic
     environment:
@@ -68,12 +64,11 @@ services:
       RESTIC_REPOSITORY: /mnt/restic
       RESTIC_PASSWORD: ghettobox
       TZ: '{{ local_timezone }}'
+
   watchtower:
     image: containrrr/watchtower
     environment:
       TZ: '{{ local_timezone }}'
-    command: '--schedule "{{ watchtower_schedule }}"
-
-      '
+    command: '--schedule "{{ watchtower_schedule }}"'
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
