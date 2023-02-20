@@ -28,16 +28,6 @@ gb_host:
     # locked down.
     local_subnet: 192.168.0.0/16
 
-    # Controls whether or not the provisioner will configure UFW to
-    # deny connections on all ports on the docker host initially
-    # (ansible roles for specific containerized services can allow
-    # necessary ports).
-    # 
-    # There are two exceptions:
-    # - access to port 22 is allowed for LAN (range specified above)
-    # - access to port 443 is allowed from anywhere (if specified below)
-    lockdown_firewall: true
-
     # Allow HTTPS connections from the public internet. This must be set
     # to "true" if anything is going to accessible from there!
     allow_https_from_anywhere: true

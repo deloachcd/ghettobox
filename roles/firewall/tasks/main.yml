@@ -1,5 +1,4 @@
 - name: Lock down the server's firewall with UFW
-  when: lockdown_firewall
   become: true
   block:
   - name: Ensure we have UFW installed for firewall
