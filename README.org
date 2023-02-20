@@ -2,26 +2,23 @@
 
 * ghettobox
 ** What is this?
-This is my personal solution for automating a large portion of the provisioning work
-involved in setting up a personal server to act as an internet-connected jukebox/private
-Spotify and Google Drive replacement, through containerized [[https://github.com/filebrowser/filebrowser][filebrowser]] and [[https://github.com/navidrome/navidrome][navidrome]]
-services. It automates where it makes sense to, but does not automate things like installing
-Docker for its containerized services or setting up automatic SSL certificate renewal for
-common DNS providers.
+This is my personal solution for automating a large portion of the
+provisioning work involved in setting up my primary home server to act
+as:
+- a NAS via Samba
+- self-hosted Spotify via Navidrome
+- self-hosted Google drive via Filebrowser
+- an "always on" remote BitTorrent session via Transmission, Gluetun
 
-Instead of comprehensively automating, this software aims to cut down the
-work involved in:
-- locking down the firewall
-- writing an nginx config to act as a reverse proxy for the services
-- writing a docker-compose file
-- writing Ansible (or manually creating/modifying files and directories over SSH)
-- writing fail2ban filters and jails
-- setting up scheduled backups for configs and user data
+It also provides:
+- automatic backups via Restic
+- a reverse proxy for web services with automatic HTTPS via Caddy
+- a web interface for monitoring & managing services via Portainer
 
-Instead, service provisioning is configured primarily through a single file, ~ghettobox.yml~,
-which is used to generate Ansible code to do the bulk of the provisioning. Its up to the user
-to SSH in, make any desired adjustments (if necessary) and bring the services up once it's
-done its thing.
+As one might guess via Portainer's inclusion, all these services are
+provisioned and deployed as Docker containers. This allows for
+drastically simplified server administration, which can easily be
+modified as personal requirements change.
 
 ** Setup
 *** Pre-requisites
@@ -33,7 +30,7 @@ done its thing.
   
 *** Steps
 1. Clone this repo and navigate to the root directory
-2. Run ~./script/init.sh~
+2. Run ~./script/init.sh~ to create 
 3. Set configuration options for the server configuration on the client-side in ~user/ghettobox.yml~
 4. Now, generate the provisioner with ~./script/generate.sh~
 5. If all goes well, the provisioner can be run with: ~cd ansible && ./provision.sh~
