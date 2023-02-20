@@ -21,3 +21,9 @@ manage.ghettobox.xyz {
 	abort @public_ips
 	reverse_proxy localhost:9443
 }
+
+torrent.ghettobox.xyz {
+	# containerized transmission service
+	abort @public_ips
+	reverse_proxy localhost:9091
+}
