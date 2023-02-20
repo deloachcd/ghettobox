@@ -1,9 +1,8 @@
 #!/bin/bash
 
-create_gb_file_from_template() {
-    echo "Creating 'user/ghettobox.yml' from template."
-    cp templates/ghettobox.yml user/ghettobox.yml
-    chmod 600 user/ghettobox.yml
+create_inventory_file_from_template() {
+    echo "Creating 'user/inventory.yml' from template."
+    cp templates/inventory.yml user/inventory.yml
 }
 
 if [[ ! -d venv ]]; then
@@ -18,15 +17,21 @@ if [[ ! -d user ]]; then
     mkdir user
 fi
 
-if [[ -e user/ghettobox.yml ]]; then
+if [[ ! -e user/secrets.yml ]]; then
+    echo "Creating 'user/secrets.yml' from template."
+    cp templates/secrets.yml user/secrets.yml
+    chmod 600 user/secrets.yml
+fi
+
+if [[ -e user/inventory.yml ]]; then
     echo
-    echo "Found a ghettobox.yml file in 'user' directory."
+    echo "Found a inventory.yml file in 'user' directory."
     read -p "Overwrite it from template? (y/n) " ANSWER
     if [[ $ANSWER == "y" ]]; then
-        create_gb_file_from_template
+        create_inventory_file_from_template
     fi
 else
-    create_gb_file_from_template
+    create_inventory_file_from_template
 fi
 echo
 echo "Initialized succesfully!"
