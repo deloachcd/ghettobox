@@ -41,6 +41,45 @@ services:
       SHARE: '{{ samba_share_config }}'
     restart: unless-stopped
 
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    # TODO flesh out
+    volumes:
+    - '{{ gb_root }}/volumes/caddy/Caddyfile'
+    - '{{ navidrome_music_path }}:/music:ro'
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      CF_API_TOKEN: "{{ cf_api_token }}"
+
+  transmission:
+    image: haugene/transmission-openvpn
+    cap_add:
+      - NET_ADMIN
+    volumes:
+    - '{{ gb_root }}/share:/data:ro'
+    - '{{ gb_root }}/volumes/transmission/config:/config'
+    environment:
+      OPENVPN_PROVIDER: PIA
+      OPENVPN_CONFIG: mexico
+      OPENVPN_USERNAME: "{{ openvpn_username }}"
+      OPENVPN_PASSWORD: "{{ openvpn_password }}"
+      LOCAL_NETWORK: 192.168.0.0/16
+      PUID: '{{ user_uid.stdout }}'
+      PGID: '{{ user_gid.stdout }}'
+      TRANSMISSION_RPC_USERNAME: example_username
+      TRANSMISSION_RPC_PASSWORD: badpass
+      TRANSMISSION_RPC_AUTHENTICATION_REQUIRED: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    ports:
+      - 9091:9091
+
   restic-backup:
     image: mazzolino/restic
     environment:
