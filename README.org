@@ -13,12 +13,11 @@ as:
 It also provides:
 - automatic backups via Restic
 - a reverse proxy for web services with automatic HTTPS via Caddy
-- a web interface for monitoring & managing services via Portainer
 
-As one might guess via Portainer's inclusion, all these services are
-provisioned and deployed as Docker containers. This allows for
-drastically simplified server administration, which can easily be
-modified as personal requirements change.
+These services are all provisioned as docker containers launched from
+a single ~docker-compose.yml~ file on the server, with their state ideally
+being confined to a ~volumes~ directory within a user-defined
+~gb_root~ path on the server.
 
 ** Setup
 *** Pre-requisites
@@ -26,7 +25,6 @@ modified as personal requirements change.
 - [[https://docs.docker.com/engine/install/debian/][Docker Engine]] installed on server, ~docker-compose~ installed for service user
 - ~python3-venv~ or equivalent installed on client PC where repo is cloned
 - A user account on the Debian server with ~sudo~ permissions, able to SSH via keyauth, able to manage docker containers
-- [[https://certbot.eff.org/][Certbot]] or [[https://github.com/acmesh-official/acme.sh][acme.sh]] (recommended) set up and automatically retrieving fresh SSL certs through a cron job
   
 *** Steps
 1. Clone this repo and navigate to the root directory
