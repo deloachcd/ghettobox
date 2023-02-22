@@ -10,7 +10,7 @@ if [[ ! -d venv ]]; then
 fi
 
 source venv/bin/activate
-pip install -r requirements.txt
+pip install ansible
 deactivate
 
 if [[ ! -d user ]]; then
