@@ -8,16 +8,15 @@ as:
 - a NAS via Samba
 - self-hosted Spotify via Navidrome
 - self-hosted Google drive via Filebrowser
-- an "always on" remote BitTorrent session via Transmission, Gluetun
+- an "always on" remote BitTorrent session via Transmission (behind VPN)
 
 It also provides:
 - automatic backups via Restic
 - a reverse proxy for web services with automatic HTTPS via Caddy
 
 These services are all provisioned as docker containers launched from
-a single ~docker-compose.yml~ file on the server, with their state ideally
-being confined to a ~volumes~ directory within a user-defined
-~gb_root~ path on the server.
+a single ~docker-compose.yml~ file on the server, for the sake of
+making provisioning and administration as painless as possible.
 
 ** Setup
 *** Pre-requisites
