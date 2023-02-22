@@ -1,6 +1,6 @@
 {
   "port": 8080,
-  "baseURL": "/drive",
+  "baseURL": "",
   "address": "",
   "log": "stdout",
   "database": "/database.db",
