@@ -1,4 +1,4 @@
-- name: Ensure our user owns the filebrowser root
+- name: Ensure our user owns everything in the filebrowser root
   file:
     path: '{{ filebrowser_root_path }}'
     owner: '{{ ansible_ssh_user }}'
