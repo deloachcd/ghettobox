@@ -62,7 +62,7 @@ services:
     cap_add:
       - NET_ADMIN
     volumes:
-    - '{{ gb_root }}/share:/data:ro'
+    - '{{ transmission_share_path }}:/data'
     - '{{ gb_root }}/volumes/transmission/config:/config'
     environment:
       OPENVPN_PROVIDER: PIA
