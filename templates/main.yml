@@ -6,6 +6,6 @@
   - navidrome     # self-hosted spotify
   - samba         # share a volume over a network
   - restic        # automatic backups for a specified volume
-  - transmission  # TODO
+  - transmission  # server-hosted bittorrent session behind VPN
   - caddy         # reverse proxy for accessing other services
   - finalize      # final tasks - don't comment/disable this role either
