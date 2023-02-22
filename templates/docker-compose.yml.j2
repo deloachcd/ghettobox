@@ -1,8 +1,9 @@
 version: '3'
 services:
+  # filebrowser - web file manager
   filebrowser:
     image: filebrowser/filebrowser:latest
-    user: '{{ user_uid.stdout }}:{{ user_gid.stdout }}'
+    user: '{{ gb_user_uid }}:{{ gb_user_gid }}'
     volumes:
     - '{{ filebrowser_root_path }}:/srv'
     - ./volumes/filebrowser/database.db:/database.db
@@ -13,6 +14,7 @@ services:
       driver: journald
     restart: always
 
+  # navidrome - self-hosted spotify
   navidrome:
     image: deluan/navidrome:latest
     user: '{{ gb_user_uid }}:{{ gb_user_gid }}'
@@ -27,6 +29,7 @@ services:
       driver: journald
     restart: always
 
+  # samba - network shares that every OS supports easily
   samba:
     image: quay.io/unixfox/samba
     ports:
