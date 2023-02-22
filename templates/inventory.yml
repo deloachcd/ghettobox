@@ -46,10 +46,6 @@ gb_host:
     # you modify the docker-compose file, so you probably don't want to
     # change that unless you know what you're doing.
     #
-    # NOTE: username specified in place of 'example_username' should
-    # almost certainly match the username specified in the smbpasswd
-    # file generated for use by the container.
-    #
     # Usage information from the 'help' text from samba.sh:
     # "<name;/path>[;browse;readonly;guest;users;admins;writelist;comment]"
     # Configure a share
@@ -65,7 +61,7 @@ gb_host:
     #   [admins] allowed default:'none' or list of admin users
     #   [writelist] list of users that can write to a RO share
     #   [comment] description of share
-    samba_share_config: ghettobox;/samba;yes;no;no;example_username
+    samba_share_config: ghettobox;/samba;yes;no;no;all;example_username
 
     # Source directory which restic will backup
     restic_backup_src: ~/ghettobox
@@ -82,6 +78,14 @@ gb_host:
     # Number of old backups to keep
     restic_keep_last: 10
 
-    # Schedule for watchtower to check for and apply base image
-    # updates, in 6-field cron syntax
-    watchtower_schedule: 0 0 4 */14 * *
+    # VPN provider for transmission container to use via openVPN
+    openvpn_provider: PIA
+
+    # Username to authenticate to transmission session
+    transmission_username: example_username
+
+    # Password to authenticate to transmission session
+    transmission_password: badpasswd
+
+    # email address for cloudflare account
+    cloudflare_email: example@shitmail.wow
