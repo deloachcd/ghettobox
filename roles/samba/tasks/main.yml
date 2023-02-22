@@ -5,7 +5,7 @@
     recurse: true
   become: true
 
-- name: Ensure we have a directory for smbpasswd file
+- name: Ensure we have a directory for samba data
   file:
     path: '{{ gb_root }}/volumes/samba'
     state: directory
