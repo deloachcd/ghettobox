@@ -1,0 +1,11 @@
+- hosts: gb_host
+  roles:
+  - setup         # setup tasks - don't comment/disable this role
+  - firewall      # configure UFW, only allowing 22 from LAN, 443 from anywhere 
+  - filebrowser   # web-based file manager for a specified volume
+  - navidrome     # self-hosted spotify
+  - samba         # share a volume over a network
+  - restic        # automatic backups for a specified volume
+  - transmission  # TODO
+  - caddy         # reverse proxy for accessing other services
+  - finalize      # final tasks - don't comment/disable this role either
