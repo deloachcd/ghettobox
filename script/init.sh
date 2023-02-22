@@ -38,5 +38,9 @@ echo "Creating docker-compose.yml.j2 from template..."
 cp templates/docker-compose.yml.j2 roles/finalize/templates/docker-compose.yml.j2
 ln -s roles/finalize/templates/docker-compose.yml.j2 user/docker-compose.yml.j2
 
+echo "Creating Caddyfile from template..."
+cp templates/Caddyfile roles/caddy/files/Caddyfile
+ln -s roles/caddy/files/Caddyfile user/Caddyfile
+
 echo
 echo "Initialized succesfully!"

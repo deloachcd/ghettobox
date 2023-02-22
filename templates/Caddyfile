@@ -1,4 +1,4 @@
-*.ghettobox.xyz {
+*.example.ghettobox.com {
 	# define matcher for all IPs not associated
 	# with private address ranges like 192.168.0.0/16
 	@public not remote_ip private_ranges
@@ -10,20 +10,20 @@
 	}
 
 	# containerized navidrome service
-	@music host music.ghettobox.xyz
+	@music host music.example.ghettobox.com
 	handle @music {
 		reverse_proxy localhost:4533
 	}
 
 	# containerized filebrowser service
-	@drive host drive.ghettobox.xyz
+	@drive host drive.example.ghettobox.com
 	handle @drive {
 		abort @public
 		reverse_proxy localhost:8080
 	}
 
 	# containerized transmission service
-	@torrent host torrent.ghettobox.xyz
+	@torrent host torrent.example.ghettobox.com
 	handle @torrent {
 		abort @public
 		reverse_proxy localhost:9091
