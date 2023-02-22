@@ -81,6 +81,9 @@ gb_host:
     # VPN provider for transmission container to use via openVPN
     openvpn_provider: PIA
 
+    # Path where transmission will write downloads
+    transmission_share_path: ~/ghettobox/share
+
     # Username to authenticate to transmission session
     transmission_username: example_username
 
