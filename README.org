@@ -33,9 +33,23 @@ making provisioning and administration as painless as possible.
   
 *** Steps
 1. Clone this repo and navigate to the root directory
-2. Run ~./script/init.sh~ to create 
-3. Set configuration options for the server configuration on the client-side in ~user/ghettobox.yml~
-4. Now, generate the provisioner with ~./script/generate.sh~
-5. If all goes well, the provisioner can be run with: ~cd ansible && ./provision.sh~
-6. If everything in the provisioner, SSH into the host and ~cd~ to the directory specified as ~gb_root~ in ~user/ghettobox.yml~
-7. Services should be able to be brought up in a ~tmux~ session with the included script, ~launcher.sh~
+2. Run ~./script/init.sh~ from project root to populate the ~user/~
+   directory, where the bulk of configuration will occur
+3. Set configuration options for the desired containerized services
+   using the files described in the "Configuration" section below
+4. Once everything looks good, run the provisioner with ~./script/provision.sh~
+5. Assuming provisioning went well, SSH into the host and ~cd~ to the
+   directory specified as ~gb_root~ in ~user/inventory.yml~
+6. Services should be able to be brought up in a ~tmux~ session with
+   the included script, ~launcher.sh~
+
+** Configuration
+There are five main files which are used to configure the provisioner 
+outside of modifying Ansible roles directly:
+| file                    | role                                                                |
+|-------------------------+---------------------------------------------------------------------|
+| ~inventory.yml~         | set configuration options through named inventory variables         |
+| ~secrets.yml~           | same as above, but for more sensitive values                        |
+| ~main.yml~              | control which roles will run by commenting them out (or not)        |
+| ~Caddyfile~             | control the behavior of the reverse proxy for web-facing containers |
+| ~docker-compose.yml.j2~ | control the behavior of the containers themselves                   |
