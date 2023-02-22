@@ -1,5 +1,4 @@
 version: '3'
-name: gb
 services:
   filebrowser:
     image: filebrowser/filebrowser:latest
@@ -29,34 +28,34 @@ services:
     restart: always
 
   samba:
-    image: dperson/samba
+    image: quay.io/unixfox/samba
     ports:
     - 139:139
     - 445:445
     volumes:
     - '{{ samba_share_path }}:/samba'
-    - ./volumes/samba/smbpasswd:/etc/samba/private/smbpasswd
     environment:
-      IMPORT: /etc/samba/private/smbpasswd
       SHARE: '{{ samba_share_config }}'
+      USER: '{{ samba_username }};{{ samba_password }}'
     restart: unless-stopped
 
+  # caddy - reverse proxy for important services
   caddy:
-    image: caddy:latest
+    image: slothcroissant/caddy-cloudflaredns:latest
     restart: unless-stopped
-    # TODO flesh out
     volumes:
-    - '{{ gb_root }}/volumes/caddy/Caddyfile'
-    - '{{ navidrome_music_path }}:/music:ro'
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+    - '{{ gb_root }}/volumes/caddy/data:/data'
+    - '{{ gb_root }}/volumes/caddy/config:/config'
+    - '{{ gb_root }}/volumes/caddy/Caddyfile:/etc/caddy/Caddyfile'
+    network_mode: host
     environment:
-      CF_API_TOKEN: "{{ cf_api_token }}"
+      CLOUDFLARE_API_TOKEN: "{{ cloudflare_api_token }}"
+      CLOUDFLARE_EMAIL: "{{ cloudflare_email }}"
+      ACME_AGREE: "{{ true }}"
 
+  # transmission - bittorrent session running through openVPN
   transmission:
-    image: haugene/transmission-openvpn
+    image: haugene/transmission-openvpn:latest
     cap_add:
       - NET_ADMIN
     volumes:
@@ -70,9 +69,9 @@ services:
       LOCAL_NETWORK: 192.168.0.0/16
       PUID: '{{ user_uid.stdout }}'
       PGID: '{{ user_gid.stdout }}'
-      TRANSMISSION_RPC_USERNAME: example_username
-      TRANSMISSION_RPC_PASSWORD: badpass
-      TRANSMISSION_RPC_AUTHENTICATION_REQUIRED: true
+      TRANSMISSION_RPC_USERNAME: "{{ transmission_username }}"
+      TRANSMISSION_RPC_PASSWORD: "{{ transmission_password }}"
+      TRANSMISSION_RPC_AUTHENTICATION_REQUIRED: "true"
     logging:
       driver: json-file
       options:
@@ -80,8 +79,9 @@ services:
     ports:
       - 9091:9091
 
+  # restic - automatic backups for important data
   restic-backup:
-    image: mazzolino/restic
+    image: mazzolino/restic:latest
     environment:
       RUN_ON_STARTUP: 'true'
       BACKUP_CRON: '{{ restic_backup_schedule }}'
@@ -96,18 +96,10 @@ services:
     - '{{ restic_backup_path }}:/mnt/restic'
 
   restic-prune:
-    image: mazzolino/restic
+    image: mazzolino/restic:latest
     environment:
       RUN_ON_STARTUP: 'true'
       PRUNE_CRON: '{{ restic_prune_schedule }}'
       RESTIC_REPOSITORY: /mnt/restic
       RESTIC_PASSWORD: ghettobox
       TZ: '{{ local_timezone }}'
-
-  watchtower:
-    image: containrrr/watchtower
-    environment:
-      TZ: '{{ local_timezone }}'
-    command: '--schedule "{{ watchtower_schedule }}"'
-    volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
