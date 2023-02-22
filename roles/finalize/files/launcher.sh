@@ -1,6 +1,8 @@
 #!/bin/bash
 
-COMPOSE_HTTP_TIMEOUT=900 tmux new-session -d -s "ghettobox" docker-compose up
+COMPOSE_HTTP_TIMEOUT=900 tmux new-session -d -s "ghettobox" \
+                         env COMPOSE_PROJECT_NAME=gb \
+                         docker-compose up 
 
 cat << EOF
  __  __ __  __  ___  ____  _   _    _    ____  
