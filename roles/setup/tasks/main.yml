@@ -16,7 +16,7 @@
   file:
     path: '{{ gb_root }}'
     state: directory
-    owner: '{{ gb_user }}'
+    owner: '{{ ansible_ssh_user }}'
   become: true
 
 - name: Ensure we have a directory for docker volume data on the host
