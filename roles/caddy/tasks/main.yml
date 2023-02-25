@@ -1,0 +1,12 @@
+- name: Ensure we have a directories for caddy's data/configs
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - '{{ gb_root }}/volumes/caddy/data'
+    - '{{ gb_root }}/volumes/caddy/config'
+
+- name: Copy over Caddyfile
+  copy:
+    src: Caddyfile
+    dest: '{{ gb_root }}/volumes/caddy/Caddyfile'

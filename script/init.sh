@@ -1,9 +1,8 @@
 #!/bin/bash
 
-create_gb_file_from_template() {
-    echo "Creating 'user/ghettobox.yml' from template."
-    cp templates/ghettobox.yml user/ghettobox.yml
-    chmod 600 user/ghettobox.yml
+create_inventory_file_from_template() {
+    echo "Creating 'user/inventory.yml' from template..."
+    cp templates/inventory.yml user/inventory.yml
 }
 
 if [[ ! -d venv ]]; then
@@ -11,22 +10,48 @@ if [[ ! -d venv ]]; then
 fi
 
 source venv/bin/activate
-pip install -r requirements.txt
+pip install ansible
 deactivate
 
 if [[ ! -d user ]]; then
     mkdir user
 fi
 
-if [[ -e user/ghettobox.yml ]]; then
+if [[ ! -e user/main.yml ]]; then
+    echo "Creating 'user/main.yml' from template..."
+    cp templates/main.yml user/main.yml
+    chmod 600 user/secrets.yml
+fi
+
+if [[ ! -e user/secrets.yml ]]; then
+    echo "Creating 'user/secrets.yml' from template..."
+    cp templates/secrets.yml user/secrets.yml
+    chmod 600 user/secrets.yml
+fi
+
+if [[ -e user/inventory.yml ]]; then
     echo
-    echo "Found a ghettobox.yml file in 'user' directory."
+    echo "Found a inventory.yml file in 'user' directory."
     read -p "Overwrite it from template? (y/n) " ANSWER
     if [[ $ANSWER == "y" ]]; then
-        create_gb_file_from_template
+        create_inventory_file_from_template
     fi
 else
-    create_gb_file_from_template
+    create_inventory_file_from_template
 fi
+
+echo "Creating docker-compose.yml.j2 from template..."
+cp templates/docker-compose.yml.j2 roles/finalize/templates/docker-compose.yml.j2
+ln -s roles/finalize/templates/docker-compose.yml.j2 user/docker-compose.yml.j2
+
+echo "Creating Caddyfile from template..."
+cp templates/Caddyfile roles/caddy/files/Caddyfile
+ln -s roles/caddy/files/Caddyfile user/Caddyfile
+
+echo "Creating symlink to roles..."
+cd user
+ln -s ../roles roles
+cd ..
+
 echo
 echo "Initialized succesfully!"

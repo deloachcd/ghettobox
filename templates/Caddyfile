@@ -1,0 +1,31 @@
+*.example.ghettobox.com {
+	# define matcher for all IPs not associated
+	# with private address ranges like 192.168.0.0/16
+	@public not remote_ip private_ranges
+
+	# use token/email address to integrate with cloudflare for
+	# automatic SSL/TLS via letsencrypt
+	tls {$CLOUDFLARE_EMAIL} {
+		dns cloudflare {$CLOUDFLARE_API_TOKEN}
+	}
+
+	# containerized navidrome service
+	@music host music.example.ghettobox.com
+	handle @music {
+		reverse_proxy localhost:4533
+	}
+
+	# containerized filebrowser service
+	@drive host drive.example.ghettobox.com
+	handle @drive {
+		abort @public
+		reverse_proxy localhost:8080
+	}
+
+	# containerized transmission service
+	@torrent host torrent.example.ghettobox.com
+	handle @torrent {
+		abort @public
+		reverse_proxy localhost:9091
+	}
+}

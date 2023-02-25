@@ -1,5 +1,6 @@
-ansible/*
 *.DS_Store*
 venv/*
 *__pycache__*
 user/*
+roles/finalize/templates/docker-compose.yml.j2
+roles/caddy/files/Caddyfile

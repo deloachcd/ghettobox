@@ -1,0 +1,11 @@
+- name: Ensure our user owns the samba share
+  file:
+    path: '{{ samba_share_path }}'
+    owner: '{{ ansible_ssh_user }}'
+    recurse: true
+  become: true
+
+- name: Ensure we have a directory for samba data
+  file:
+    path: '{{ gb_root }}/volumes/samba'
+    state: directory

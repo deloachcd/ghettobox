@@ -2,26 +2,27 @@
 
 * ghettobox
 ** What is this?
-This is my personal solution for automating a large portion of the provisioning work
-involved in setting up a personal server to act as an internet-connected jukebox/private
-Spotify and Google Drive replacement, through containerized [[https://github.com/filebrowser/filebrowser][filebrowser]] and [[https://github.com/navidrome/navidrome][navidrome]]
-services. It automates where it makes sense to, but does not automate things like installing
-Docker for its containerized services or setting up automatic SSL certificate renewal for
-common DNS providers.
+This is my personal solution for automating a large portion of the
+provisioning work involved in setting up my primary home server to act
+as:
+- a NAS via Samba
+- self-hosted Spotify via Navidrome
+- self-hosted Google drive via Filebrowser
+- an "always on" remote BitTorrent session via Transmission (behind VPN)
 
-Instead of comprehensively automating, this software aims to cut down the
-work involved in:
-- locking down the firewall
-- writing an nginx config to act as a reverse proxy for the services
-- writing a docker-compose file
-- writing Ansible (or manually creating/modifying files and directories over SSH)
-- writing fail2ban filters and jails
-- setting up scheduled backups for configs and user data
+It also provides:
+- automatic backups via Restic
+- a reverse proxy for web services with automatic HTTPS via Caddy
 
-Instead, service provisioning is configured primarily through a single file, ~ghettobox.yml~,
-which is used to generate Ansible code to do the bulk of the provisioning. Its up to the user
-to SSH in, make any desired adjustments (if necessary) and bring the services up once it's
-done its thing.
+These services are all provisioned as docker containers launched from
+a single ~docker-compose.yml~ file on the server, for the sake of
+making provisioning and administration as painless as possible.
+
+*** Who is this repo useful for?
+- me (obviously), as I use it to provision my home server
+- anyone who wants copy my home server setup almost exactly
+- anyone who wants to fork this repo and do something similar
+- anyone who wants a reference for a simple automated setup like this
 
 ** Setup
 *** Pre-requisites
@@ -29,13 +30,26 @@ done its thing.
 - [[https://docs.docker.com/engine/install/debian/][Docker Engine]] installed on server, ~docker-compose~ installed for service user
 - ~python3-venv~ or equivalent installed on client PC where repo is cloned
 - A user account on the Debian server with ~sudo~ permissions, able to SSH via keyauth, able to manage docker containers
-- [[https://certbot.eff.org/][Certbot]] or [[https://github.com/acmesh-official/acme.sh][acme.sh]] (recommended) set up and automatically retrieving fresh SSL certs through a cron job
   
 *** Steps
 1. Clone this repo and navigate to the root directory
-2. Run ~./script/init.sh~
-3. Set configuration options for the server configuration on the client-side in ~user/ghettobox.yml~
-4. Now, generate the provisioner with ~./script/generate.sh~
-5. If all goes well, the provisioner can be run with: ~cd ansible && ./provision.sh~
-6. If everything in the provisioner, SSH into the host and ~cd~ to the directory specified as ~gb_root~ in ~user/ghettobox.yml~
-7. Services should be able to be brought up in a ~tmux~ session with the included script, ~launcher.sh~
+2. Run ~./script/init.sh~ from project root to populate the ~user/~
+   directory, where the bulk of configuration will occur
+3. Set configuration options for the desired containerized services
+   using the files described in the "Configuration" section below
+4. Once everything looks good, run the provisioner with ~./script/provision.sh~
+5. Assuming provisioning went well, SSH into the host and ~cd~ to the
+   directory specified as ~gb_root~ in ~user/inventory.yml~
+6. Services should be able to be brought up in a ~tmux~ session with
+   the included script, ~launcher.sh~
+
+** Configuration
+There are five main files which are used to configure the provisioner 
+outside of modifying Ansible roles directly:
+| file                    | role                                                                |
+|-------------------------+---------------------------------------------------------------------|
+| ~inventory.yml~         | set configuration options through named inventory variables         |
+| ~secrets.yml~           | same as above, but for more sensitive values                        |
+| ~main.yml~              | control which roles will run by commenting them out (or not)        |
+| ~Caddyfile~             | control the behavior of the reverse proxy for web-facing containers |
+| ~docker-compose.yml.j2~ | control the behavior of the containers themselves                   |
