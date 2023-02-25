@@ -13,9 +13,6 @@ gb_host:
     # This user will act as the admin for 
     ansible_ssh_user: example_username
 
-    # TODO get rid of all instances of this variable
-    gb_user: example_username
-
     # Location for ghettobox services to store docker volumes and other
     # persistent data
     gb_root: ~/ghettobox
