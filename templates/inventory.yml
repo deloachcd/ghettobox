@@ -81,11 +81,5 @@ gb_host:
     # Path where transmission will write downloads
     transmission_share_path: ~/ghettobox/share
 
-    # Username to authenticate to transmission session
-    transmission_username: example_username
-
-    # Password to authenticate to transmission session
-    transmission_password: badpasswd
-
     # email address for cloudflare account
     cloudflare_email: example@shitmail.wow
