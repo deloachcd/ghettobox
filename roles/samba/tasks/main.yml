@@ -9,8 +9,3 @@
   file:
     path: '{{ gb_root }}/volumes/samba'
     state: directory
-
-- name: Copy over smbpasswd file containing hashed credentials
-  copy:
-    src: smbpasswd
-    dest: '{{ gb_root }}/volumes/samba'
