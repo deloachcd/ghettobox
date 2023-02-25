@@ -20,7 +20,6 @@ fi
 if [[ ! -e user/main.yml ]]; then
     echo "Creating 'user/main.yml' from template..."
     cp templates/main.yml user/main.yml
-    chmod 600 user/secrets.yml
 fi
 
 if [[ ! -e user/secrets.yml ]]; then
