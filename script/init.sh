@@ -48,5 +48,10 @@ echo "Creating Caddyfile from template..."
 cp templates/Caddyfile roles/caddy/files/Caddyfile
 ln -s roles/caddy/files/Caddyfile user/Caddyfile
 
+echo "Creating symlink to roles..."
+cd user
+ln -s ../roles roles
+cd ..
+
 echo
 echo "Initialized succesfully!"
