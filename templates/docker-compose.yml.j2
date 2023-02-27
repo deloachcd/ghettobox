@@ -5,9 +5,9 @@ services:
     image: filebrowser/filebrowser:latest
     user: '{{ gb_user_uid }}:{{ gb_user_gid }}'
     volumes:
-    - '{{ filebrowser_root_path }}:/srv'
-    - ./volumes/filebrowser/database.db:/database.db
-    - ./volumes/filebrowser/filebrowser.json:/.filebrowser.json
+      - '{{ filebrowser_root_path }}:/srv'
+      - ./volumes/filebrowser/database.db:/database.db
+      - ./volumes/filebrowser/filebrowser.json:/.filebrowser.json
     ports:
     - 8080:8080
     logging:
@@ -19,12 +19,12 @@ services:
     image: deluan/navidrome:latest
     user: '{{ gb_user_uid }}:{{ gb_user_gid }}'
     ports:
-    - 4533:4533
+      - 4533:4533
     environment:
       ND_CONFIGFILE: /data/config.toml
     volumes:
-    - ./volumes/navidrome:/data
-    - '{{ navidrome_music_path }}:/music:ro'
+      - ./volumes/navidrome:/data
+      - '{{ navidrome_music_path }}:/music:ro'
     logging:
       driver: journald
     restart: always
@@ -33,11 +33,11 @@ services:
   samba:
     image: crazymax/samba
     ports:
-    - 139:139
-    - 445:445
+      - 139:139
+      - 445:445
     volumes:
-    - "{{ gb_root }}/volumes/samba/data:/data"
-    - '{{ samba_share_path }}:/samba/ghettobox'
+      - "{{ gb_root }}/volumes/samba/data:/data"
+      - '{{ samba_share_path }}:/samba/ghettobox'
     environment:
       TZ: "{{ local_timezone }}"
     restart: unless-stopped
@@ -47,9 +47,9 @@ services:
     image: slothcroissant/caddy-cloudflaredns:latest
     restart: unless-stopped
     volumes:
-    - '{{ gb_root }}/volumes/caddy/data:/data'
-    - '{{ gb_root }}/volumes/caddy/config:/config'
-    - '{{ gb_root }}/volumes/caddy/Caddyfile:/etc/caddy/Caddyfile'
+      - '{{ gb_root }}/volumes/caddy/data:/data'
+      - '{{ gb_root }}/volumes/caddy/config:/config'
+      - '{{ gb_root }}/volumes/caddy/Caddyfile:/etc/caddy/Caddyfile'
     network_mode: host
     environment:
       GB_DOMAIN: "{{ gb_domain }}"
@@ -63,8 +63,8 @@ services:
     cap_add:
       - NET_ADMIN
     volumes:
-    - '{{ transmission_share_path }}:/data'
-    - '{{ gb_root }}/volumes/transmission/config:/config'
+      - '{{ transmission_share_path }}:/data'
+      - '{{ gb_root }}/volumes/transmission/config:/config'
     environment:
       OPENVPN_PROVIDER: PIA
       OPENVPN_CONFIG: mexico
@@ -96,8 +96,8 @@ services:
       RESTIC_FORGET_ARGS: --keep-last {{ restic_keep_last }}
       TZ: '{{ local_timezone }}'
     volumes:
-    - '{{ restic_backup_src }}:/data:ro'
-    - '{{ restic_backup_path }}:/mnt/restic'
+      - '{{ restic_backup_src }}:/data:ro'
+      - '{{ restic_backup_path }}:/mnt/restic'
 
   restic-prune:
     image: mazzolino/restic:latest
