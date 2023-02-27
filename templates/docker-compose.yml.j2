@@ -52,6 +52,7 @@ services:
     - '{{ gb_root }}/volumes/caddy/Caddyfile:/etc/caddy/Caddyfile'
     network_mode: host
     environment:
+      GB_DOMAIN: "{{ gb_domain }}"
       CLOUDFLARE_API_TOKEN: "{{ cloudflare_api_token }}"
       CLOUDFLARE_EMAIL: "{{ cloudflare_email }}"
       ACME_AGREE: "{{ true }}"
