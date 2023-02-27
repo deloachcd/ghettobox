@@ -1,0 +1,21 @@
+# NOTE: if you want to do a more complex, multi-user/share setup with this,
+# you might just want to skip referencing anything from secrets.yml
+# for samba config and just chmod 600 this file as well - writing
+# passwords here directly
+
+auth:
+  - user: {{ samba_username }}
+    group: {{ samba_username }}
+    uid: {{ gb_user_uid }}
+    gid: {{ gb_user_gid }}
+    password: "{{ samba_password }}"
+
+share:
+  - name: ghettobox
+    path: /samba/ghettobox
+    browsable: yes
+    readonly: no
+    guestok: no
+    veto: no
+    validusers: {{ samba_username }}
+    writelist: {{ samba_username }}
