@@ -31,15 +31,15 @@ services:
 
   # samba - network shares that every OS supports easily
   samba:
-    image: quay.io/unixfox/samba
+    image: crazymax/samba
     ports:
     - 139:139
     - 445:445
     volumes:
-    - '{{ samba_share_path }}:/samba'
+    - "{{ gb_root }}/volumes/samba/data:/data"
+    - '{{ samba_share_path }}:/samba/ghettobox'
     environment:
-      SHARE: '{{ samba_share_config }}'
-      USER: '{{ samba_username }};{{ samba_password }}'
+      TZ: "{{ local_timezone }}"
     restart: unless-stopped
 
   # caddy - reverse proxy for important services

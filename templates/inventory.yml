@@ -4,7 +4,7 @@ gb_host:
     # provisioned to host the containerized services within the home
     # directory of the username specified as 'ansible_ssh_user' in
     # this inventory file.
-    ghettobox.example.com:
+    example.ghettobox.com:
   vars:
     # The username to connect to the server and run the deploy logic
     # as. Needs to be able to escalate privileges via sudo, and
@@ -12,6 +12,9 @@ gb_host:
     # 
     # This user will act as the admin for 
     ansible_ssh_user: example_username
+
+    # Domain which Caddy will use by default for automatic SSL and proxy
+    gb_domain: example.ghettobox.com
 
     # Location for ghettobox services to store docker volumes and other
     # persistent data
