@@ -44,7 +44,7 @@ making provisioning and administration as painless as possible.
    the included script, ~launcher.sh~
 
 ** Configuration
-There are five main files which are used to configure the provisioner 
+There are six main files which are used to configure the provisioner 
 outside of modifying Ansible roles directly:
 | file                    | role                                                                |
 |-------------------------+---------------------------------------------------------------------|
@@ -54,5 +54,3 @@ outside of modifying Ansible roles directly:
 | ~Caddyfile~             | control the behavior of the reverse proxy for web-facing containers |
 | ~docker-compose.yml.j2~ | control the behavior of the containers themselves                   |
 | ~samba-config.yml~      | define users and shares for samba                                   |
-
-* TODO templated Caddyfile
