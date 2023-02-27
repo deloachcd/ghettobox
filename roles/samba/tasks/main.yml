@@ -7,5 +7,10 @@
 
 - name: Ensure we have a directory for samba data
   file:
-    path: '{{ gb_root }}/volumes/samba'
+    path: '{{ gb_root }}/volumes/samba/data'
     state: directory
+
+- name: Write YAML samba config to where container will use it
+  template:
+    src: config.yml
+    dest: volumes/samba/data/config.yml

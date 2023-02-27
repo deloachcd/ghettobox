@@ -41,15 +41,19 @@ fi
 
 echo "Creating docker-compose.yml.j2 from template..."
 cp templates/docker-compose.yml.j2 roles/finalize/templates/docker-compose.yml.j2
-ln -s roles/finalize/templates/docker-compose.yml.j2 user/docker-compose.yml.j2
+ln -sf roles/finalize/templates/docker-compose.yml.j2 user/docker-compose.yml.j2
 
 echo "Creating Caddyfile from template..."
 cp templates/Caddyfile roles/caddy/files/Caddyfile
-ln -s roles/caddy/files/Caddyfile user/Caddyfile
+ln -sf roles/caddy/files/Caddyfile user/Caddyfile
+
+echo "Creating samba-config.yml from template..."
+cp templates/samba-config.yml roles/samba/templates/config.yml
+ln -sf roles/samba/templates/config.yml user/samba-config.yml
 
 echo "Creating symlink to roles..."
 cd user
-ln -s ../roles roles
+ln -sf ../roles roles
 cd ..
 
 echo
