@@ -102,8 +102,9 @@ services:
   restic-prune:
     image: mazzolino/restic:latest
     environment:
-      RUN_ON_STARTUP: 'true'
       PRUNE_CRON: '{{ restic_prune_schedule }}'
       RESTIC_REPOSITORY: /mnt/restic
       RESTIC_PASSWORD: ghettobox
       TZ: '{{ local_timezone }}'
+    volumes:
+      - '{{ restic_backup_path }}:/mnt/restic'
