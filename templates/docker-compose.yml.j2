@@ -12,7 +12,7 @@ services:
     - 8080:8080
     logging:
       driver: journald
-    restart: always
+    restart: unless-stopped
 
   # navidrome - self-hosted spotify
   navidrome:
@@ -27,7 +27,7 @@ services:
       - '{{ navidrome_music_path }}:/music:ro'
     logging:
       driver: journald
-    restart: always
+    restart: unless-stopped
 
   # samba - network shares that every OS supports easily
   samba:
@@ -45,7 +45,6 @@ services:
   # caddy - reverse proxy for important services
   caddy:
     image: slothcroissant/caddy-cloudflaredns:latest
-    restart: unless-stopped
     volumes:
       - '{{ gb_root }}/volumes/caddy/data:/data'
       - '{{ gb_root }}/volumes/caddy/config:/config'
@@ -56,6 +55,7 @@ services:
       CLOUDFLARE_API_TOKEN: "{{ cloudflare_api_token }}"
       CLOUDFLARE_EMAIL: "{{ cloudflare_email }}"
       ACME_AGREE: "{{ true }}"
+    restart: unless-stopped
 
   # transmission - bittorrent session running through openVPN
   transmission:
@@ -82,6 +82,7 @@ services:
         max-size: 10m
     ports:
       - 9091:9091
+    restart: unless-stopped
 
   # restic - automatic backups for important data
   restic-backup:
