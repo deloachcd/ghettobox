@@ -8,4 +8,5 @@
   - restic        # automatic backups for a specified volume
   - transmission  # server-hosted bittorrent session behind VPN
   - caddy         # reverse proxy for accessing other services
+  - baikal        # calDAV service for self-hosted calendar
   - finalize      # final tasks - don't comment/disable this role either

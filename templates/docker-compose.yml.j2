@@ -57,6 +57,16 @@ services:
       ACME_AGREE: "{{ true }}"
     restart: unless-stopped
 
+  # baikal - calendar service
+  baikal:
+    image: ckulka/baikal:nginx
+    ports:
+      - 5232:80
+    volumes:
+      - "{{ gb_root }}/volumes/baikal/config:/var/www/baikal/config"
+      - "{{ gb_root }}/volumes/baikal/Specific:/var/www/baikal/Specific"
+    restart: unless-stopped
+
   # transmission - bittorrent session running through openVPN
   transmission:
     image: haugene/transmission-openvpn:latest

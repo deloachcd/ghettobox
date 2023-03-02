@@ -9,6 +9,7 @@ as:
 - self-hosted Spotify via Navidrome
 - self-hosted Google drive via Filebrowser
 - an "always on" remote BitTorrent session via Transmission (behind VPN)
+- a calDAV calendar via Baikal
 
 It also provides:
 - automatic backups via Restic
