@@ -12,6 +12,11 @@
 - set_fact:
     gb_user_gid: '{{ user_gid.stdout }}'
 
+# NOTE: this conversion to absolute path is critical for reference in
+# any task which uses 'become'!
+- set_fact:
+    gb_root: '{{ gb_root | replace("~", "/home/"+ansible_ssh_user) }}'
+
 - name: Ensure gb_root exists and is a directory that gb_user owns
   file:
     path: '{{ gb_root }}'
