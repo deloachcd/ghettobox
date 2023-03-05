@@ -1,10 +1,5 @@
 #!/bin/bash
 
-create_inventory_file_from_template() {
-    echo "Creating 'user/inventory.yml' from template..."
-    cp templates/inventory.yml user/inventory.yml
-}
-
 if [[ ! -d venv ]]; then
     python3 -m venv venv
 fi
