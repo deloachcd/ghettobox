@@ -1,7 +1,11 @@
-# NOTE: if you want to do a more complex, multi-user/share setup with this,
-# you might just want to skip referencing anything from secrets.yml
-# for samba config and just chmod 600 this file as well - writing
-# passwords here directly
+# NOTE: if you want to do a more complex, multi-user/share setup with
+# this, you might just want to skip referencing anything from
+# secrets.yml for samba config and just chmod 600 this file as well -
+# writing passwords here directly
+#
+# this file is written as a Jinja2 template by ansible - see the
+# comment at the top of templates/docker-compose.yml for more info
+# on this
 
 auth:
   - user: {{ samba_username }}
