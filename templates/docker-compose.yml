@@ -1,3 +1,9 @@
+# NOTE
+# this docker-compose.yml file is written as a Jinja2 template
+# by Ansible - all inventory vars & secrets, facts and register
+# contents defined during provisioning can be referenced in this
+# file, and have their literal values written
+
 version: '3'
 services:
   # filebrowser - web file manager

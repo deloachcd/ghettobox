@@ -28,9 +28,9 @@ if [[ ! -e user/secrets.yml ]]; then
     chmod 600 user/secrets.yml
 fi
 
-echo "Creating docker-compose.yml.j2 from template..."
-cp templates/docker-compose.yml.j2 roles/finalize/templates/docker-compose.yml.j2
-ln -sf roles/finalize/templates/docker-compose.yml.j2 user/docker-compose.yml.j2
+echo "Creating docker-compose.yml from template..."
+cp templates/docker-compose.yml roles/finalize/templates/docker-compose.yml
+ln -sf roles/finalize/templates/docker-compose.yml user/docker-compose.yml
 
 echo "Creating Caddyfile from template..."
 cp templates/Caddyfile roles/caddy/files/Caddyfile

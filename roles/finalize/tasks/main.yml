@@ -6,7 +6,7 @@
 
 - name: Create populated docker-compose.yml file for service initialization
   template:
-    src: templates/docker-compose.yml.j2
+    src: templates/docker-compose.yml
     dest: '{{ gb_root }}/docker-compose.yml'
 
 - name: Ensure only provisioning user can read/write docker-compose.yml

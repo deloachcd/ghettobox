@@ -53,5 +53,5 @@ outside of modifying Ansible roles directly:
 | ~secrets.yml~           | same as above, but for more sensitive values                        |
 | ~main.yml~              | control which roles will run by commenting them out (or not)        |
 | ~Caddyfile~             | control the behavior of the reverse proxy for web-facing containers |
-| ~docker-compose.yml.j2~ | control the behavior of the containers themselves                   |
+| ~docker-compose.yml~    | control the behavior of the containers themselves                   |
 | ~samba-config.yml~      | define users and shares for samba                                   |
