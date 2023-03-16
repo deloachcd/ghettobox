@@ -15,6 +15,12 @@
 		reverse_proxy localhost:4533
 	}
 
+	# containerized jellyfin service
+	@music host media.{$GB_DOMAIN}
+	handle @music {
+		reverse_proxy localhost:8096
+	}
+
 	# containerized baikal service
 	@calendar host calendar.{$GB_DOMAIN}
 	handle @calendar {

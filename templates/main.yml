@@ -4,6 +4,7 @@
   - firewall      # configure UFW, only allowing 22 from LAN, 443 from anywhere 
   - filebrowser   # web-based file manager for a specified volume
   - navidrome     # self-hosted spotify
+  - jellyfin      # self-hosted netflix
   - samba         # share a volume over a network
   - restic        # automatic backups for a specified volume
   - transmission  # server-hosted bittorrent session behind VPN

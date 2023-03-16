@@ -35,6 +35,18 @@ services:
       driver: journald
     restart: unless-stopped
 
+  # jellyfin - self-hosted netflix
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    user: '{{ gb_user_uid }}:{{ gb_user_gid }}'
+    ports:
+      - 8096:8096
+    volumes:
+      - "{{ gb_root }}/volumes/jellyfin/config:/config"
+      - "{{ gb_root }}/volumes/jellyfin/cache:/cache"
+      - "{{ jellyfin_media_path }}:/media:ro"
+    restart: unless-stopped
+
   # samba - network shares that every OS supports easily
   samba:
     image: crazymax/samba:latest

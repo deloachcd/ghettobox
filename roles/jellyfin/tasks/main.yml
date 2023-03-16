@@ -1,0 +1,13 @@
+- name: Ensure Jellyfin media library exists, and ansible_ssh_user owns it
+  file:
+    path: '{{ jellyfin_media_path }}'
+    state: directory
+    owner: '{{ ansible_ssh_user }}'
+
+- name: Ensure we have directores for Jellyfin data on the host
+  file:
+    path: '{{ gb_root }}/volumes/jellyfin'
+    state: directory
+  loop:
+    - '{{ gb_root }}/volumes/jellyfin/cache'
+    - '{{ gb_root }}/volumes/jellyfin/config'

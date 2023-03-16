@@ -38,6 +38,9 @@ gb_host:
     # Path where music files to be hosted by navidrome will be stored
     navidrome_music_path: ~/ghettobox/share/music
 
+    # Path where video/media files to be hosted by jellyfin will be stored
+    jellyfin_media_path: ~/ghettobox/share/videos
+
     # Path the user will be able to mount as a samba share
     samba_share_path: ~/ghettobox/share
 
