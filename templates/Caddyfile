@@ -16,8 +16,8 @@
 	}
 
 	# containerized jellyfin service
-	@music host media.{$GB_DOMAIN}
-	handle @music {
+	@media host media.{$GB_DOMAIN}
+	handle @media {
 		reverse_proxy localhost:8096
 	}
 
