@@ -31,6 +31,13 @@
 		reverse_proxy localhost:5232
 	}
 
+	# containerized soulseek service (slskd)
+	@soulseek host soulseek.{$GB_DOMAIN}
+	handle @soulseek {
+		abort @public
+		reverse_proxy localhost:5030
+	}
+
 	# containerized filebrowser service
 	@drive host drive.{$GB_DOMAIN}
 	handle @drive {

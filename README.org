@@ -3,18 +3,19 @@
 * ghettobox
 ** What is this?
 This is my personal solution for automating a large portion of the
-provisioning work involved in setting up my primary home server to act
-as:
+work involved in setting up my primary home server to act as:
 - a NAS via Samba
 - self-hosted Spotify via Navidrome
 - self-hosted Netflix via Jellyfin
 - self-hosted Google drive via Filebrowser
-- an "always on" remote BitTorrent session via Transmission (behind VPN)
+- an "always on" remote BitTorrent session via Transmission
+- a P2P file-sharing server via Soulseek
 - a calDAV calendar via Baikal
 
 It also provides:
 - automatic backups via Restic
 - a reverse proxy for web services with automatic HTTPS via Caddy
+- a VPN connection which other services can use via Gluetun
 
 These services are all provisioned as docker containers launched from
 a single ~docker-compose.yml~ file on the server, for the sake of

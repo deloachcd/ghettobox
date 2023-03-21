@@ -51,19 +51,25 @@ gb_host:
     restic_backup_path: /backups/ghettobox
 
     # Schedule for restic to create backups, in 6-field cron syntax
-    restic_backup_schedule: 0 0 3 * * *
+    restic_backup_schedule: 0 0 2 * * *
 
     # Schedule for restic to prune old backups
-    restic_prune_schedule: 0 30 3 * * *
+    restic_prune_schedule: 0 0 10 * * *
 
     # Number of old backups to keep
     restic_keep_last: 10
 
     # VPN provider for transmission container to use via openVPN
-    openvpn_provider: PIA
+    openvpn_provider: nordvpn
+
+    # Priority list of VPN server regions, comma-seperated
+    openvpn_server_regions: Netherlands,Denmark,France
 
     # Path where transmission will write downloads
     transmission_share_path: ~/ghettobox/share
+
+    # Path which soulseek will share
+    soulseek_share_path: ~/ghettobox/share/public
 
     # email address for cloudflare account
     cloudflare_email: example@shitmail.wow

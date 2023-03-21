@@ -1,0 +1,12 @@
+- name: Ensure our user owns soulseek's shared directory
+  file:
+    path: '{{ soulseek_share_path }}'
+    owner: '{{ ansible_ssh_user }}'
+    recurse: true
+    state: directory
+  become: true
+
+- name: Ensure we have a directory for soulseek's application data
+  file:
+    path:  '{{ gb_root }}/volumes/slskd'
+    state: directory

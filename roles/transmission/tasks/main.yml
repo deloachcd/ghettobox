@@ -6,7 +6,10 @@
     state: directory
   become: true
 
-- name: Ensure we have a directory for transmission's config 
+- name: Ensure we have directories for transmission's config/torrents
   file:
-    path: '{{ gb_root }}/volumes/transmission/config'
+    path: '{{ item }}'
     state: directory
+  loop:
+    - '{{ gb_root }}/volumes/transmission/config'
+    - '{{ gb_root }}/volumes/transmission/watch'
