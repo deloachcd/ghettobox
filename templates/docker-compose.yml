@@ -94,7 +94,7 @@ services:
       - '{{ gb_root }}/volumes/gluetun:/gluetun'
     environment:
       VPN_SERVICE_PROVIDER: "{{ openvpn_provider }}"
-      OPENVPN_USERNAME: "{{ openvpn_username }}"
+      OPENVPN_USER: "{{ openvpn_username }}"
       OPENVPN_PASSWORD: "{{ openvpn_password }}"
       SERVER_REGIONS: "{{ openvpn_server_regions }}"
     ports:
@@ -119,8 +119,6 @@ services:
       PGID: '{{ gb_user_gid }}'
       USER: "{{ transmission_username }}"
       PASS: "{{ transmission_password }}"
-    ports:
-      - 9091:9091
     restart: unless-stopped
     
   # soulseek - limewire for a new generation
@@ -134,7 +132,7 @@ services:
       SLSKD_SLSK_USERNAME: "{{ soulseek_username }}"
       SLSKD_SLSK_PASSWORD: "{{ soulseek_password }}"
       SLSKD_USERNAME: "{{ slskd_username }}"
-      SLSKD_USERNAME: "{{ slskd_password }}"
+      SLSKD_PASSWORD: "{{ slskd_password }}"
     volumes:
       - '{{ gb_root }}/volumes/slskd:/app'
       - '{{ soulseek_share_path }}:/share'
