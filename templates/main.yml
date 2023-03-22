@@ -6,6 +6,7 @@
   - navidrome     # self-hosted spotify
   - jellyfin      # self-hosted netflix
   - samba         # share a volume over a network
+  - slskd         # limewire for a new generation
   - restic        # automatic backups for a specified volume
   - transmission  # server-hosted bittorrent session behind VPN
   - caddy         # reverse proxy for accessing other services
