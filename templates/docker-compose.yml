@@ -97,13 +97,15 @@ services:
       OPENVPN_USER: "{{ openvpn_username }}"
       OPENVPN_PASSWORD: "{{ openvpn_password }}"
       SERVER_REGIONS: "{{ openvpn_server_regions }}"
+      # port forwarding for private internet access -
+      # config would certainly be different for different VPN providers
+      PRIVATE_INTERNET_ACCESS_VPN_PORT_FORWARDING: "on"
+      PRIVATE_INTERNET_ACCESS_VPN_PORT_FORWARDING_STATUS_FILE: "/gluetun/forwarded_port"
     ports:
       # ports for transmission
       - 9091:9091
-      - 51413:51413
       # ports for soulseek/slskd
       - 5030:5030
-      - 50300:50300
     restart: unless-stopped
 
   # transmission - classic bittorrent client, now with a webUI
@@ -113,12 +115,14 @@ services:
     volumes:
       - '{{ gb_root }}/volumes/transmission/config:/config'
       - '{{ gb_root }}/volumes/transmission/watch:/watch'
+      - '{{ gb_root }}/volumes/gluetun:/gluetun:ro' # used to read forwarded_port
       - '{{ transmission_share_path }}:/downloads'
     environment:
       PUID: '{{ gb_user_uid }}'
       PGID: '{{ gb_user_gid }}'
       USER: "{{ transmission_username }}"
       PASS: "{{ transmission_password }}"
+      FILE__PEERPORT: "/gluetun/forwarded_port" # set port forward from file
     restart: unless-stopped
     
   # soulseek - limewire for a new generation
