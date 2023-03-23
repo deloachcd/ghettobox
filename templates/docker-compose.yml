@@ -9,6 +9,8 @@ services:
   # filebrowser - web file manager
   filebrowser:
     image: filebrowser/filebrowser:latest
+    healthcheck:
+      test: curl -f http://localhost:8080/health || exit 1
     user: '{{ gb_user_uid }}:{{ gb_user_gid }}'
     volumes:
       - '{{ filebrowser_root_path }}:/srv'
