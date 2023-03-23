@@ -9,6 +9,7 @@ services:
   # filebrowser - web file manager
   filebrowser:
     image: filebrowser/filebrowser:latest
+    # TODO: simplify this whole thing
     healthcheck:
       test: curl -f http://localhost:8080/health || exit 1
     user: '{{ gb_user_uid }}:{{ gb_user_gid }}'
@@ -100,9 +101,13 @@ services:
       OPENVPN_PASSWORD: "{{ openvpn_password }}"
       SERVER_REGIONS: "{{ openvpn_server_regions }}"
       # port forwarding for private internet access -
-      # config would certainly be different for different VPN providers
+      # config would be different for different VPN providers
       PRIVATE_INTERNET_ACCESS_VPN_PORT_FORWARDING: "on"
       PRIVATE_INTERNET_ACCESS_VPN_PORT_FORWARDING_STATUS_FILE: "/gluetun/forwarded_port"
+    healthcheck:
+      test: test -e /gluetun/forwarded_port || exit 1
+      interval: 60s
+      retries: 0
     ports:
       # ports for transmission
       - 9091:9091
@@ -114,6 +119,14 @@ services:
   transmission:
     image: lscr.io/linuxserver/transmission:latest
     network_mode: "service:gluetun"
+    healthcheck:
+      test: ping -c1 1.1.1.1 || exit 1
+      start_period: 60s
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    labels:
+      autoheal: "true"
     volumes:
       - '{{ gb_root }}/volumes/transmission/config:/config'
       - '{{ gb_root }}/volumes/transmission/watch:/watch'
@@ -131,6 +144,14 @@ services:
   slskd:
     image: slskd/slskd
     network_mode: "service:gluetun"
+    healthcheck:
+      test: ping -c1 1.1.1.1 || exit 1
+      start_period: 60s
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    labels:
+      autoheal: "true"
     user: '{{ gb_user_uid }}:{{ gb_user_gid }}'
     environment:
       SLSKD_REMOTE_CONFIGURATION: "true"
@@ -142,6 +163,13 @@ services:
     volumes:
       - '{{ gb_root }}/volumes/slskd:/app'
       - '{{ soulseek_share_path }}:/share'
+    restart: unless-stopped
+
+  # >tfw docker maintainer and too high IQ to merge useful built-ins
+  autoheal:
+    image: willfarrell/autoheal:1.2.0
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock' # ARE YA FEELIN IT MR KRABS?
     restart: unless-stopped
 
   # restic - automatic backups for important data
