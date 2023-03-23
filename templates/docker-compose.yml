@@ -165,7 +165,7 @@ services:
       - '{{ soulseek_share_path }}:/share'
     restart: unless-stopped
 
-  # >tfw docker maintainer and too high IQ to merge useful built-ins
+  # restart containers labelled with "autoheal:true" on health check fail
   autoheal:
     image: willfarrell/autoheal:1.2.0
     volumes:
