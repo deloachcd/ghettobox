@@ -6,7 +6,7 @@
 
 - name: Ensure we have directores for Jellyfin data on the host
   file:
-    path: '{{ gb_root }}/volumes/jellyfin'
+    path: '{{ item }}'
     state: directory
   loop:
     - '{{ gb_root }}/volumes/jellyfin/cache'
