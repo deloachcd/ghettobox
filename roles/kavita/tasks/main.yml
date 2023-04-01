@@ -1,0 +1,11 @@
+- name: Ensure Kavita comics path exists, and ansible_ssh_user owns it
+  file:
+    path: '{{ kavita_comics_path }}'
+    state: directory
+    owner: '{{ ansible_ssh_user }}'
+
+- name: Ensure we have a directory for Kavita's config on the host
+  file:
+    path: '{{ gb_root }}/volumes/kavita/config'
+    state: directory
+    owner: '{{ ansible_ssh_user }}'

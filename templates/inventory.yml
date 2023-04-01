@@ -41,6 +41,9 @@ gb_host:
     # Path where video/media files to be hosted by jellyfin will be stored
     jellyfin_media_path: ~/ghettobox/share/videos
 
+    # Path where comic archives to be hosted by kavita will be stored
+    kavita_comics_path: ~/ghettobox/share/comics
+
     # Path the user will be able to mount as a samba share
     samba_share_path: ~/ghettobox/share
 

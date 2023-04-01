@@ -21,6 +21,12 @@
 		reverse_proxy localhost:8096
 	}
 
+	# containerized kavita service
+	@comics host comics.{$GB_DOMAIN}
+	handle @comics {
+		reverse_proxy localhost:5000
+	}
+
 	# containerized baikal service
 	@calendar host calendar.{$GB_DOMAIN}
 	handle @calendar {

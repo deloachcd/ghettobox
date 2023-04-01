@@ -47,6 +47,18 @@ services:
       - "{{ jellyfin_media_path }}:/media:ro"
     restart: unless-stopped
 
+  # kavita - manga and comics
+  kavita:
+    image: kizaing/kavita:latest
+    ports:
+      - 5000:5000
+    volumes:
+      - "{{ kavita_comics_path }}:/comics:ro"
+      - "{{ gb_root }}/volumes/kavita/config:/config"
+    environment:
+      TZ: "{{ local_timezone }}"
+    restart: unless-stopped
+
   # samba - network shares that every OS supports easily
   samba:
     image: crazymax/samba:latest

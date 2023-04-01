@@ -5,6 +5,7 @@
   - filebrowser   # web-based file manager for a specified volume
   - navidrome     # self-hosted spotify
   - jellyfin      # self-hosted netflix
+  - kavita        # read manga and comics
   - samba         # share a volume over a network
   - slskd         # limewire for a new generation
   - restic        # automatic backups for a specified volume
