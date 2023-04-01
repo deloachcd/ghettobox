@@ -4,19 +4,19 @@
 ** What is this?
 This is my personal solution for automating a large portion of the
 work involved in setting up my primary home server to act as:
-- a NAS via Samba
-- self-hosted Spotify via Navidrome
-- self-hosted Netflix via Jellyfin
-- a web comics/manga reader via Kavita
-- self-hosted Google drive via Filebrowser
-- an "always on" remote BitTorrent session via Transmission
-- a P2P file-sharing server via Soulseek
-- a calDAV calendar via Baikal
+- a NAS via [[https://github.com/crazy-max/docker-samba][Samba]]
+- self-hosted Spotify via [[https://github.com/navidrome/navidrome][Navidrome]] 
+- self-hosted Netflix via [[https://github.com/jellyfin/jellyfin][Jellyfin]]
+- a web comics/manga reader via [[https://github.com/Kareadita/Kavita][Kavita]]
+- self-hosted Google drive via [[https://github.com/filebrowser/filebrowser][Filebrowser]]
+- an "always on" remote BitTorrent session via [[https://github.com/linuxserver/docker-transmission][Transmission]]
+- a P2P file-sharing host via [[https://github.com/slskd/slskd/][Soulseek]]
+- a calDAV calendar via [[https://github.com/ckulka/baikal-docker][Baikal]]
 
 It also provides:
-- automatic backups via Restic
-- a reverse proxy for web services with automatic HTTPS via Caddy
-- a VPN connection which other services can use via Gluetun
+- automatic backups via [[https://github.com/djmaze/resticker/][Restic]]
+- a reverse proxy for web services with automatic HTTPS via [[https://github.com/caddyserver/caddy][Caddy]]
+- a VPN connection which other services can use via [[https://github.com/qdm12/gluetun][Gluetun]]
 
 These services are all provisioned as docker containers launched from
 a single ~docker-compose.yml~ file on the server, for the sake of
