@@ -7,6 +7,7 @@ work involved in setting up my primary home server to act as:
 - a NAS via Samba
 - self-hosted Spotify via Navidrome
 - self-hosted Netflix via Jellyfin
+- a web comics/manga reader via Kavita
 - self-hosted Google drive via Filebrowser
 - an "always on" remote BitTorrent session via Transmission
 - a P2P file-sharing server via Soulseek
