@@ -33,7 +33,8 @@ making provisioning and administration as painless as possible.
 - Server running a currently supported version of [[https://www.debian.org/][Debian]]
 - [[https://docs.docker.com/engine/install/debian/][Docker Engine]] installed on server, ~docker-compose~ installed for service user
 - ~python3-venv~ or equivalent installed on client PC where repo is cloned
-- A user account on the Debian server with ~sudo~ permissions, able to SSH via keyauth, able to manage docker containers
+- A user account on the Debian server with ~sudo~ permissions, able to
+  SSH via keyauth, able to manage docker containers
   
 *** Steps
 1. Clone this repo and navigate to the root directory
