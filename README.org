@@ -14,7 +14,6 @@ work involved in setting up my primary home server to act as:
 - a calDAV calendar via [[https://github.com/ckulka/baikal-docker][Baikal]]
 
 It also provides:
-- automatic backups via [[https://github.com/djmaze/resticker/][Restic]]
 - a reverse proxy for web services with automatic HTTPS via [[https://github.com/caddyserver/caddy][Caddy]]
 - a VPN connection which other services can use via [[https://github.com/qdm12/gluetun][Gluetun]]
 

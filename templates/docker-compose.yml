@@ -176,28 +176,3 @@ services:
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock' # ARE YA FEELIN IT MR KRABS?
     restart: unless-stopped
-
-  # restic - automatic backups for important data
-  restic-backup:
-    image: mazzolino/restic:latest
-    environment:
-      BACKUP_CRON: '{{ restic_backup_schedule }}'
-      RESTIC_PASSWORD: ghettobox
-      RESTIC_REPOSITORY: /mnt/restic
-      RESTIC_BACKUP_SOURCES: /data
-      RESTIC_BACKUP_ARGS: --tag docker-volumes --verbose
-      RESTIC_FORGET_ARGS: --keep-last {{ restic_keep_last }}
-      TZ: '{{ local_timezone }}'
-    volumes:
-      - '{{ restic_backup_src }}:/data:ro'
-      - '{{ restic_backup_path }}:/mnt/restic'
-
-  restic-prune:
-    image: mazzolino/restic:latest
-    environment:
-      PRUNE_CRON: '{{ restic_prune_schedule }}'
-      RESTIC_REPOSITORY: /mnt/restic
-      RESTIC_PASSWORD: ghettobox
-      TZ: '{{ local_timezone }}'
-    volumes:
-      - '{{ restic_backup_path }}:/mnt/restic'

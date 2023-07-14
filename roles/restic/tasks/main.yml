@@ -1,6 +1,0 @@
-- name: Ensure restic_backup_path exists, and is owned by ansible_ssh_user
-  file:
-    path: '{{ restic_backup_path }}'
-    state: directory
-    owner: '{{ ansible_ssh_user }}'
-  become: true

@@ -47,21 +47,6 @@ gb_host:
     # Path the user will be able to mount as a samba share
     samba_share_path: ~/ghettobox/share
 
-    # Source directory which restic will backup
-    restic_backup_src: ~/ghettobox
-
-    # Location where restic will store backups
-    restic_backup_path: /backups/ghettobox
-
-    # Schedule for restic to create backups, in 6-field cron syntax
-    restic_backup_schedule: 0 0 2 * * *
-
-    # Schedule for restic to prune old backups
-    restic_prune_schedule: 0 0 10 * * *
-
-    # Number of old backups to keep
-    restic_keep_last: 10
-
     # VPN provider for transmission container to use via openVPN
     openvpn_provider: nordvpn
 
