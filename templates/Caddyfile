@@ -27,16 +27,6 @@
 		reverse_proxy localhost:5000
 	}
 
-	# containerized baikal service
-	@calendar host calendar.{$GB_DOMAIN}
-	handle @calendar {
-		# drop public IPs trying to access the admin page
-		handle /admin/* {
-			abort @public
-		}
-		reverse_proxy localhost:5232
-	}
-
 	# containerized soulseek service (slskd)
 	@soulseek host soulseek.{$GB_DOMAIN}
 	handle @soulseek {

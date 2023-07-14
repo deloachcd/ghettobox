@@ -11,7 +11,6 @@ work involved in setting up my primary home server to act as:
 - self-hosted Google drive via [[https://github.com/filebrowser/filebrowser][Filebrowser]]
 - an "always on" remote BitTorrent session via [[https://github.com/linuxserver/docker-transmission][Transmission]]
 - a P2P file-sharing host via [[https://github.com/slskd/slskd/][Soulseek]]
-- a calDAV calendar via [[https://github.com/ckulka/baikal-docker][Baikal]]
 
 It also provides:
 - a reverse proxy for web services with automatic HTTPS via [[https://github.com/caddyserver/caddy][Caddy]]
