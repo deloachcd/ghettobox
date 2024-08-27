@@ -1,6 +1,6 @@
 ![gb_logo](./img/ghettobox.png)
 
-# ghettobox - minimalist version
+# ghettobox - lazy self-hosting
 ## how to use
 1. checkout on `portal` or `internal` host
 2. navigate to respective dir for host type
