@@ -1,0 +1,31 @@
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    environment:
+      TS_AUTHKEY: "${TS_AUTHKEY}"
+      TS_EXTRA_ARGS: '--advertise-tags=tag:container'
+      TS_STATE_DIR: '/var/lib/tailscale'
+      TS_USERSPACE: "false"
+    volumes:
+      - ./volumes/tailscale/state:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+
+  # caddy - reverse proxy for important services
+  caddy:
+    image: slothcroissant/caddy-cloudflaredns:latest
+    volumes:
+      - './volumes/caddy/data:/data'
+      - './volumes/caddy/config:/config'
+      - './volumes/caddy/Caddyfile:/etc/caddy/Caddyfile'
+    network_mode: service:tailscale
+    environment:
+      PORTAL_DOMAIN: "${PORTAL_DOMAIN}"
+      CLOUDFLARE_API_TOKEN: "${CLOUDFLARE_API_TOKEN}"
+      CLOUDFLARE_EMAIL: "${CLOUDFLARE_EMAIL}"
+      PORTAL_SERVICE_HOST: "${PORTAL_SERVICE_HOST}"
+      ACME_AGREE: "true"
+    restart: unless-stopped

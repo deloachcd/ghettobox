@@ -1,7 +1,0 @@
-# I went for a pretty minimal config setup here, but preferences might vary.
-# Documentation for these config options is available here:
-# https://www.navidrome.org/docs/usage/configuration-options/
-DefaultTheme = "Nord"
-ListenBrainz.Enabled = false
-EnableFavourites = false
-EnableStarRating = false

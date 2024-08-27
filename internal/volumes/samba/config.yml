@@ -8,11 +8,11 @@
 # on this
 
 auth:
-  - user: {{ samba_username }}
-    group: {{ samba_username }}
-    uid: {{ gb_user_uid }}
-    gid: {{ gb_user_gid }}
-    password: "{{ samba_password }}"
+  - user: ${SAMBA_USERNAME}
+    group: ${SAMBA_USERNAME}
+    uid: ${GB_USER_UID}
+    gid: ${GB_USER_GID}
+    password: "${SAMBA_PASSWORD}"
 
 share:
   - name: ghettobox
@@ -21,5 +21,5 @@ share:
     readonly: no
     guestok: no
     veto: no
-    validusers: {{ samba_username }}
-    writelist: {{ samba_username }}
+    validusers: ${SAMBA_USERNAME}
+    writelist: ${SAMBA_USERNAME}

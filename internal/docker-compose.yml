@@ -1,0 +1,129 @@
+services:
+  plex:
+    image: linuxserver/plex:latest
+    #network_mode: host
+    ports:
+      # primary
+      - 32400:32400
+      # plex companion - roku control
+      - 8324:8324
+      # GDM network discovery
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp 
+    environment:
+      PUID: "${GB_USER_UID}"
+      PGID: "${GB_USER_GID}"
+      TZ: 'America/Denver'
+      VERSION: 'docker'
+      PLEX_CLAIM: "${PLEX_CLAIM}"
+    volumes:
+      - ./volumes/plex:/config
+      - ./share/tv:/tv
+      - ./share/movies:/movies
+      - ./share/music:/music
+    restart: unless-stopped
+
+  kavita:
+    image: kizaing/kavita:latest
+    ports:
+      - 5000:5000
+    volumes:
+      - ./share/comics:/comics:ro
+      - ./volumes/kavita:/config
+    environment:
+      TZ: 'America/Denver'
+    restart: unless-stopped
+
+  samba:
+    image: crazymax/samba:latest
+    ports:
+      - 139:139
+      - 445:445
+    volumes:
+      - ./volumes/samba:/data
+      - ./share:/samba/ghettobox
+    environment:
+      TZ: 'America/Denver'
+      SAMBA_USERNAME: "${SAMBA_USERNAME}"
+      SAMBA_PASSWORD: "${SAMBA_PASSWORD}"
+      GB_USER_UID: "${GB_USER_UID}"
+      GB_USER_GID: "${GB_USER_GID}"
+    restart: unless-stopped
+
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./volumes/gluetun:/gluetun
+    environment:
+      VPN_SERVICE_PROVIDER: "private internet access"
+      OPENVPN_USER: "${OPENVPN_USERNAME}"
+      OPENVPN_PASSWORD: "${OPENVPN_PASSWORD}"
+      SERVER_REGIONS: "${OPENVPN_SERVER_REGIONS}"
+      # port forwarding for private internet access -
+      # config would be different for different VPN providers
+      PRIVATE_INTERNET_ACCESS_VPN_PORT_FORWARDING: "on"
+      PRIVATE_INTERNET_ACCESS_VPN_PORT_FORWARDING_STATUS_FILE: "/gluetun/forwarded_port"
+    ports:
+      # ports for transmission
+      - 9091:9091
+      # ports for soulseek/slskd
+      - 5030:5030
+    restart: unless-stopped
+
+  transmission:
+    image: linuxserver/transmission:latest
+    network_mode: "service:gluetun"
+    healthcheck:
+      test: ping -c1 1.1.1.1 || exit 1
+      start_period: 60s
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    labels:
+      autoheal: "true"
+    volumes:
+      - ./volumes/transmission/config:/config
+      - ./volumes/transmission/watch:/watch
+      - ./volumes/gluetun:/gluetun:ro # used to read forwarded_port
+      - ./share:/downloads'
+    environment:
+      PUID: '${GB_USER_UID}'
+      PGID: '${GB_USER_GID}}'
+      USER: "${TRANSMISSION_USERNAME}"
+      PASS: "${TRANSMISSION_PASSWORD}"
+      FILE__PEERPORT: "/gluetun/forwarded_port" # set port forward from file
+    restart: unless-stopped
+
+  slskd:
+    image: slskd/slskd
+    user: "${GB_USER_UID}:${GB_USER_GID}"
+    network_mode: "service:gluetun"
+    healthcheck:
+      test: bash -c 'cat < /dev/null > /dev/tcp/1.1.1.1/53' || exit 1
+      start_period: 60s
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    labels:
+      autoheal: "true"
+    environment:
+      SLSKD_REMOTE_CONFIGURATION: "true"
+      SLSKD_SHARED_DIR: "/share"
+      SLSKD_SLSK_USERNAME: "{SOULSEEK_USERNAME}}"
+      SLSKD_SLSK_PASSWORD: "{SOULSEEK_PASSWORD}}"
+      SLSKD_USERNAME: "${SLSKD_USERNAME}"
+      SLSKD_PASSWORD: "${SLSKD_PASSWORD}"
+    volumes:
+      - ./volumes/slskd:/app
+      - "${SOULSEEK_SHARE_PATH}":/share
+    restart: unless-stopped
+
+  autoheal:
+    image: willfarrell/autoheal:1.2.0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # ARE YA FEELIN IT MR KRABS?
+    restart: unless-stopped
