@@ -23,10 +23,12 @@ services:
       - ./share/tv:/tv
       - ./share/movies:/movies
       - ./share/music:/music
+    devices:
+      - /dev/dri:/dev/dri
     restart: unless-stopped
 
   kavita:
-    image: kizaing/kavita:latest
+    image: jvmilazz0/kavita:latest
     ports:
       - 5000:5000
     volumes:
@@ -92,7 +94,7 @@ services:
       - ./share:/downloads'
     environment:
       PUID: '${GB_USER_UID}'
-      PGID: '${GB_USER_GID}}'
+      PGID: '${GB_USER_GID}'
       USER: "${TRANSMISSION_USERNAME}"
       PASS: "${TRANSMISSION_PASSWORD}"
       FILE__PEERPORT: "/gluetun/forwarded_port" # set port forward from file
@@ -113,13 +115,13 @@ services:
     environment:
       SLSKD_REMOTE_CONFIGURATION: "true"
       SLSKD_SHARED_DIR: "/share"
-      SLSKD_SLSK_USERNAME: "{SOULSEEK_USERNAME}}"
-      SLSKD_SLSK_PASSWORD: "{SOULSEEK_PASSWORD}}"
+      SLSKD_SLSK_USERNAME: "${SOULSEEK_USERNAME}"
+      SLSKD_SLSK_PASSWORD: "${SOULSEEK_PASSWORD}"
       SLSKD_USERNAME: "${SLSKD_USERNAME}"
       SLSKD_PASSWORD: "${SLSKD_PASSWORD}"
     volumes:
       - ./volumes/slskd:/app
-      - "${SOULSEEK_SHARE_PATH}":/share
+      - ./share/music:/share
     restart: unless-stopped
 
   autoheal:
