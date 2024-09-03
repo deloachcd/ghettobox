@@ -6,6 +6,9 @@ services:
       TS_EXTRA_ARGS: '--advertise-tags=tag:container'
       TS_STATE_DIR: '/var/lib/tailscale'
       TS_USERSPACE: "false"
+    ports:
+      - 80:80
+      - 443:443
     volumes:
       - ./volumes/tailscale/state:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
@@ -13,7 +16,7 @@ services:
       - net_admin
       - sys_module
     restart: unless-stopped
-
+  
   # caddy - reverse proxy for important services
   caddy:
     image: slothcroissant/caddy-cloudflaredns:latest
@@ -24,8 +27,9 @@ services:
     network_mode: service:tailscale
     environment:
       PORTAL_DOMAIN: "${PORTAL_DOMAIN}"
+      PORTAL_SERVICE_HOST: "${PORTAL_SERVICE_HOST}"
+      PORTAL_IP_WHITELIST: "${PORTAL_IP_WHITELIST}"
       CLOUDFLARE_API_TOKEN: "${CLOUDFLARE_API_TOKEN}"
       CLOUDFLARE_EMAIL: "${CLOUDFLARE_EMAIL}"
-      PORTAL_SERVICE_HOST: "${PORTAL_SERVICE_HOST}"
       ACME_AGREE: "true"
     restart: unless-stopped

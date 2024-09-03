@@ -1,7 +1,7 @@
 *.{$PORTAL_DOMAIN} {
 	# define matcher for all IPs not associated
 	# with private address ranges like 192.168.0.0/16
-	@public not remote_ip private_ranges
+	@public not remote_ip private_ranges {$PORTAL_IP_WHITELIST}
 
 	# use token/email address to integrate with cloudflare for
 	# automatic SSL/TLS via letsencrypt
