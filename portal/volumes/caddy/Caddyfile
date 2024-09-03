@@ -12,26 +12,26 @@
 	# containerized plex service
 	@media host media.{$PORTAL_DOMAIN}
 	handle @media {
-		reverse_proxy ${PORTAL_SERVICE_HOST}:32400
+		reverse_proxy {$PORTAL_SERVICE_HOST}:32400
 	}
 
 	# containerized kavita service
 	@comics host comics.{$PORTAL_DOMAIN}
 	handle @comics {
-		reverse_proxy ${PORTAL_SERVICE_HOST}:5000
+		reverse_proxy {$PORTAL_SERVICE_HOST}:5000
 	}
 
 	# containerized soulseek service (slskd)
 	@soulseek host soulseek.{$PORTAL_DOMAIN}
 	handle @soulseek {
 		abort @public
-		reverse_proxy ${PORTAL_SERVICE_HOST}:5030
+		reverse_proxy {$PORTAL_SERVICE_HOST}:5030
 	}
 
 	# containerized transmission service
 	@torrent host torrent.{$PORTAL_DOMAIN}
 	handle @torrent {
 		abort @public
-		reverse_proxy ${PORTAL_SERVICE_HOST}:9091
+		reverse_proxy {$PORTAL_SERVICE_HOST}:9091
 	}
 }
