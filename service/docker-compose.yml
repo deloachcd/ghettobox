@@ -1,30 +1,31 @@
 services:
-  plex:
-    image: linuxserver/plex:latest
-    #network_mode: host
+  jellyfin:
+    image: linuxserver/jellyfin:latest
     ports:
-      # primary
-      - 32400:32400
-      # plex companion - roku control
-      - 8324:8324
-      # GDM network discovery
-      - 32410:32410/udp
-      - 32412:32412/udp
-      - 32413:32413/udp
-      - 32414:32414/udp 
+      - 8096:8096
+    volumes:
+      - ./volumes/jellyfin/config:/config
+      - ./volumes/jellyfin/cache:/cache
+      - ./share/movies:/movies:ro
+      - ./share/tv:/movies:ro
+      - ./share/music:/music:ro
+    devices:
+      - /dev/dri:/dev/dri
     environment:
       PUID: "${GB_USER_UID}"
       PGID: "${GB_USER_GID}"
-      TZ: 'America/Denver'
-      VERSION: 'docker'
-      PLEX_CLAIM: "${PLEX_CLAIM}"
+    restart: unless-stopped
+
+  navidrome:
+    image: deluan/navidrome:latest
+    user: "${GB_USER_UID}:${GB_USER_GID}"
+    ports:
+      - 4533:4533
+    environment:
+      ND_CONFIGFILE: /data/config.toml
     volumes:
-      - ./volumes/plex:/config
-      - ./share/tv:/tv
-      - ./share/movies:/movies
-      - ./share/music:/music
-    devices:
-      - /dev/dri:/dev/dri
+      - ./volumes/navidrome:/data
+      - ./share/music:/music:ro
     restart: unless-stopped
 
   kavita:
@@ -48,6 +49,7 @@ services:
       - ./share:/samba/ghettobox
     environment:
       TZ: 'America/Denver'
+      SAMBA_HOSTS_ALLOW: "100.64.0.0/10"
       SAMBA_USERNAME: "${SAMBA_USERNAME}"
       SAMBA_PASSWORD: "${SAMBA_PASSWORD}"
       GB_USER_UID: "${GB_USER_UID}"
