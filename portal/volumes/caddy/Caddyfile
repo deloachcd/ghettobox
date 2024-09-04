@@ -9,10 +9,10 @@
 		dns cloudflare {$CLOUDFLARE_API_TOKEN}
 	}
 
-	# containerized plex service
+	# containerized jellyfin service
 	@media host media.{$PORTAL_DOMAIN}
 	handle @media {
-		reverse_proxy {$PORTAL_SERVICE_HOST}:32400
+		reverse_proxy {$PORTAL_SERVICE_HOST}:8096
 	}
 
 	# containerized kavita service
