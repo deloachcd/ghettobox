@@ -5,9 +5,8 @@ services:
       - 8096:8096
     volumes:
       - ./volumes/jellyfin/config:/config
-      - ./volumes/jellyfin/cache:/cache
       - ./share/movies:/movies:ro
-      - ./share/tv:/movies:ro
+      - ./share/tv:/tv:ro
       - ./share/music:/music:ro
     devices:
       - /dev/dri:/dev/dri
@@ -93,7 +92,7 @@ services:
       - ./volumes/transmission/config:/config
       - ./volumes/transmission/watch:/watch
       - ./volumes/gluetun:/gluetun:ro # used to read forwarded_port
-      - ./share:/downloads'
+      - ./share:/downloads
     environment:
       PUID: '${GB_USER_UID}'
       PGID: '${GB_USER_GID}'
