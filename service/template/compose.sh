@@ -1,7 +1,6 @@
 #!/bin/bash
 export GB_USER_UID="$(id -u)"
 export GB_USER_GID="$(id -g)"
-export PLEX_CLAIM=""
 export SAMBA_USERNAME=""
 export SAMBA_PASSWORD=""
 export OPENVPN_USERNAME=""
@@ -13,6 +12,9 @@ export SOULSEEK_USERNAME=""
 export SOULSEEK_PASSWORD=""
 export SLSKD_USERNAME=""
 export SLSKD_PASSWORD=""
-#export SOULSEEK_SHARE_PATH=""
+export COUCHDB_USER=""
+export COUCHDB_PASSWORD=""
+export VIKUNJA_SERVICE_JWTSECRET="refresco-cont-net"
+export VIKUNJA_SERVICE_PUBLICURL="http://localhost:3456"
 
 docker compose "$@"
