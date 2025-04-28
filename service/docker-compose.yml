@@ -15,6 +15,17 @@ services:
       PGID: "${GB_USER_GID}"
     restart: unless-stopped
 
+  filebrowser:
+    image: filebrowser/filebrowser
+    user: "${GB_USER_UID}:${GB_USER_GID}"
+    ports:
+      - 8080:8080
+    volumes:
+      - ./share:/srv
+      - ./volumes/filebrowser/database.db:/filebrowser.db
+      - ./volumes/filebrowser/settings.json:/.filebrowser.json
+    restart: unless-stopped
+
   navidrome:
     image: deluan/navidrome:latest
     user: "${GB_USER_UID}:${GB_USER_GID}"
@@ -29,6 +40,7 @@ services:
 
   vikunja:
     image: vikunja/vikunja:latest
+    user: "${GB_USER_UID}:${GB_USER_GID}"
     environment:
       VIKUNJA_SERVICE_JWTSECRET: "${VIKUNJA_SERVICE_JWTSECRET}"
       VIKUNJA_SERVICE_PUBLICURL: "${VIKUNJA_SERVICE_PUBLICURL}"
@@ -38,6 +50,7 @@ services:
     volumes:
       - ./volumes/vikunja/files:/app/vikunja/files
       - ./volumes/vikunja/db:/db
+    restart: unless-stopped
 
   kavita:
     image: jvmilazz0/kavita:latest
@@ -48,23 +61,6 @@ services:
       - ./volumes/kavita:/config
     environment:
       TZ: 'America/Denver'
-    restart: unless-stopped
-
-  samba:
-    image: crazymax/samba:latest
-    ports:
-      - 139:139
-      - 445:445
-    volumes:
-      - ./volumes/samba:/data
-      - ./share:/samba/ghettobox
-    environment:
-      TZ: 'America/Denver'
-      SAMBA_HOSTS_ALLOW: "100.64.0.0/10"
-      SAMBA_USERNAME: "${SAMBA_USERNAME}"
-      SAMBA_PASSWORD: "${SAMBA_PASSWORD}"
-      GB_USER_UID: "${GB_USER_UID}"
-      GB_USER_GID: "${GB_USER_GID}"
     restart: unless-stopped
 
   gluetun:
