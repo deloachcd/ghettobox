@@ -14,5 +14,7 @@ export SLSKD_USERNAME=""
 export SLSKD_PASSWORD=""
 export COUCHDB_USER=""
 export COUCHDB_PASSWORD=""
+export VIKUNJA_SERVICE_JWTSECRET=""
+export VIKUNJA_SERVICE_PUBLICURL=""
 
 docker compose "$@"

@@ -44,6 +44,20 @@ services:
       - ./share/music:/music:ro
     restart: unless-stopped
 
+  vikunja:
+    image: vikunja/vikunja:latest
+    user: "${GB_USER_UID}:${GB_USER_GID}"
+    environment:
+      VIKUNJA_SERVICE_JWTSECRET: "${VIKUNJA_SERVICE_JWTSECRET}"
+      VIKUNJA_SERVICE_PUBLICURL: "${VIKUNJA_SERVICE_PUBLICURL}"
+      VIKUNJA_DATABASE_PATH: /db/vikunja.db
+    ports:
+      - 3456:3456
+    volumes:
+      - ./volumes/vikunja/files:/app/vikunja/files
+      - ./volumes/vikunja/db:/db
+    restart: unless-stopped
+
   kavita:
     image: jvmilazz0/kavita:latest
     ports:
