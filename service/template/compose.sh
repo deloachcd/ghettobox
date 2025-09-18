@@ -16,5 +16,6 @@ export COUCHDB_USER=""
 export COUCHDB_PASSWORD=""
 export VIKUNJA_SERVICE_JWTSECRET=""
 export VIKUNJA_SERVICE_PUBLICURL=""
+export TUNNEL_TOKEN=""
 
 docker compose "$@"
