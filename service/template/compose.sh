@@ -14,7 +14,5 @@ export SLSKD_USERNAME=""
 export SLSKD_PASSWORD=""
 export COUCHDB_USER=""
 export COUCHDB_PASSWORD=""
-export VIKUNJA_SERVICE_JWTSECRET="refresco-cont-net"
-export VIKUNJA_SERVICE_PUBLICURL="http://localhost:3456"
 
 docker compose "$@"
